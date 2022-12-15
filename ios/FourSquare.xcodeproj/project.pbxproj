@@ -21,12 +21,15 @@
 		81AB9BB82411601600AC10FF /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */; };
 		90FDE4D4440145679277BB03 /* Roboto-MediumItalic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = F580C4DC0CFB426196493CCB /* Roboto-MediumItalic.ttf */; };
 		9229377F2442407ABAD082AF /* Roboto-Italic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 73F4B0841CB0460EA0090CAB /* Roboto-Italic.ttf */; };
+		9418F2012C6A4CE0BA5775D7 /* AvenirLTStd-Roman.otf in Resources */ = {isa = PBXBuildFile; fileRef = 8FA7191F2DA24CD5905446D1 /* AvenirLTStd-Roman.otf */; };
+		AE77F5E513DA4B8EABA1B264 /* AvenirLTStd-Black.otf in Resources */ = {isa = PBXBuildFile; fileRef = 52B2C92B9E194A0089F391F8 /* AvenirLTStd-Black.otf */; };
 		BE26844497944F939AE7075F /* Roboto-Bold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 97E75E6E906C4AC0BA5290C6 /* Roboto-Bold.ttf */; };
 		C7A1B4EDBD564A64BEB411AF /* Roboto-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 890E9F2600F44E7DB0C7EE94 /* Roboto-Regular.ttf */; };
 		CC40806A01204736A4138108 /* Roboto-Black.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 5BD4BBADD68B4AA0A290F478 /* Roboto-Black.ttf */; };
 		CDBBFF1FD07D436D94096DF1 /* Roboto-BoldItalic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 72ED0D1F490145B6915987FE /* Roboto-BoldItalic.ttf */; };
 		D22C9BAB294AF392002926D4 /* fonts in Resources */ = {isa = PBXBuildFile; fileRef = D22C9BAA294AF392002926D4 /* fonts */; };
 		DE760E29AAAC4560BCACADE7 /* LICENSE.txt in Resources */ = {isa = PBXBuildFile; fileRef = 29D846D37EE64362A5D658ED /* LICENSE.txt */; };
+		E43D527C755A42279A79DB68 /* AvenirLTStd-Book.otf in Resources */ = {isa = PBXBuildFile; fileRef = 0E422419163D4F64AD6B951E /* AvenirLTStd-Book.otf */; };
 		F465DB1F024C48B0BA7C14FA /* Roboto-ThinItalic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 4F780D6D54A84CE19947351D /* Roboto-ThinItalic.ttf */; };
 /* End PBXBuildFile section */
 
@@ -44,6 +47,7 @@
 		00E356EE1AD99517003FC87E /* FourSquareTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = FourSquareTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		00E356F11AD99517003FC87E /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		00E356F21AD99517003FC87E /* FourSquareTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = FourSquareTests.m; sourceTree = "<group>"; };
+		0E422419163D4F64AD6B951E /* AvenirLTStd-Book.otf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = undefined; includeInIndex = 0; lastKnownFileType = unknown; name = "AvenirLTStd-Book.otf"; path = "../src/assets/fonts/AvenirLTStd-Book.otf"; sourceTree = "<group>"; };
 		13B07F961A680F5B00A75B9A /* FourSquare.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = FourSquare.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		13B07FAF1A68108700A75B9A /* AppDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AppDelegate.h; path = FourSquare/AppDelegate.h; sourceTree = "<group>"; };
 		13B07FB01A68108700A75B9A /* AppDelegate.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = AppDelegate.mm; path = FourSquare/AppDelegate.mm; sourceTree = "<group>"; };
@@ -55,6 +59,7 @@
 		2F2DE76D93C34CD0B0EE03E7 /* Roboto-Thin.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "Roboto-Thin.ttf"; path = "../src/assets/fonts/Roboto-Thin.ttf"; sourceTree = "<group>"; };
 		3B4392A12AC88292D35C810B /* Pods-FourSquare.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-FourSquare.debug.xcconfig"; path = "Target Support Files/Pods-FourSquare/Pods-FourSquare.debug.xcconfig"; sourceTree = "<group>"; };
 		4F780D6D54A84CE19947351D /* Roboto-ThinItalic.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "Roboto-ThinItalic.ttf"; path = "../src/assets/fonts/Roboto-ThinItalic.ttf"; sourceTree = "<group>"; };
+		52B2C92B9E194A0089F391F8 /* AvenirLTStd-Black.otf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = undefined; includeInIndex = 0; lastKnownFileType = unknown; name = "AvenirLTStd-Black.otf"; path = "../src/assets/fonts/AvenirLTStd-Black.otf"; sourceTree = "<group>"; };
 		5709B34CF0A7D63546082F79 /* Pods-FourSquare.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-FourSquare.release.xcconfig"; path = "Target Support Files/Pods-FourSquare/Pods-FourSquare.release.xcconfig"; sourceTree = "<group>"; };
 		5B7EB9410499542E8C5724F5 /* Pods-FourSquare-FourSquareTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-FourSquare-FourSquareTests.debug.xcconfig"; path = "Target Support Files/Pods-FourSquare-FourSquareTests/Pods-FourSquare-FourSquareTests.debug.xcconfig"; sourceTree = "<group>"; };
 		5BD4BBADD68B4AA0A290F478 /* Roboto-Black.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "Roboto-Black.ttf"; path = "../src/assets/fonts/Roboto-Black.ttf"; sourceTree = "<group>"; };
@@ -67,6 +72,7 @@
 		890E9F2600F44E7DB0C7EE94 /* Roboto-Regular.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "Roboto-Regular.ttf"; path = "../src/assets/fonts/Roboto-Regular.ttf"; sourceTree = "<group>"; };
 		899C2586EEBF4B44B172489B /* Roboto-Light.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "Roboto-Light.ttf"; path = "../src/assets/fonts/Roboto-Light.ttf"; sourceTree = "<group>"; };
 		89C6BE57DB24E9ADA2F236DE /* Pods-FourSquare-FourSquareTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-FourSquare-FourSquareTests.release.xcconfig"; path = "Target Support Files/Pods-FourSquare-FourSquareTests/Pods-FourSquare-FourSquareTests.release.xcconfig"; sourceTree = "<group>"; };
+		8FA7191F2DA24CD5905446D1 /* AvenirLTStd-Roman.otf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = undefined; includeInIndex = 0; lastKnownFileType = unknown; name = "AvenirLTStd-Roman.otf"; path = "../src/assets/fonts/AvenirLTStd-Roman.otf"; sourceTree = "<group>"; };
 		97E75E6E906C4AC0BA5290C6 /* Roboto-Bold.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "Roboto-Bold.ttf"; path = "../src/assets/fonts/Roboto-Bold.ttf"; sourceTree = "<group>"; };
 		D0A8F848705F41908E3BF492 /* Roboto-BlackItalic.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "Roboto-BlackItalic.ttf"; path = "../src/assets/fonts/Roboto-BlackItalic.ttf"; sourceTree = "<group>"; };
 		D22C9BAA294AF392002926D4 /* fonts */ = {isa = PBXFileReference; lastKnownFileType = folder; path = fonts; sourceTree = "<group>"; };
@@ -194,6 +200,9 @@
 				2F2DE76D93C34CD0B0EE03E7 /* Roboto-Thin.ttf */,
 				4F780D6D54A84CE19947351D /* Roboto-ThinItalic.ttf */,
 				29D846D37EE64362A5D658ED /* LICENSE.txt */,
+				52B2C92B9E194A0089F391F8 /* AvenirLTStd-Black.otf */,
+				0E422419163D4F64AD6B951E /* AvenirLTStd-Book.otf */,
+				8FA7191F2DA24CD5905446D1 /* AvenirLTStd-Roman.otf */,
 			);
 			name = Resources;
 			sourceTree = "<group>";
@@ -308,6 +317,9 @@
 				F465DB1F024C48B0BA7C14FA /* Roboto-ThinItalic.ttf in Resources */,
 				DE760E29AAAC4560BCACADE7 /* LICENSE.txt in Resources */,
 				D22C9BAB294AF392002926D4 /* fonts in Resources */,
+				AE77F5E513DA4B8EABA1B264 /* AvenirLTStd-Black.otf in Resources */,
+				E43D527C755A42279A79DB68 /* AvenirLTStd-Book.otf in Resources */,
+				9418F2012C6A4CE0BA5775D7 /* AvenirLTStd-Roman.otf in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
