@@ -9,10 +9,26 @@ import {
   View,
 } from 'react-native';
 import React from 'react';
-import Input1 from '../components/TextInputs/textInputs';
+import {Input1} from '../components/TextInputs/textInputs';
 import Buttons from '../components/Buttons/Buttons';
+import {Formik, Field} from 'formik';
+import * as yup from 'yup';
 
-const ResetPassword = () => {
+const passwordValidationSchema = yup.object().shape({
+  password: yup
+    .string()
+    .matches(/\w*[a-z]\w*/, 'Password must have a small letter')
+    .matches(/\w*[A-Z]\w*/, 'Password must have a capital letter')
+    .matches(/\d/, 'Password must have a number')
+    .min(6, ({min}) => `Password must be at least ${min} characters`)
+    .required(' Password is required'),
+  confirmPassword: yup
+    .string()
+    .oneOf([yup.ref('password')], 'Password do not match')
+    .required('Confirm Password is required'),
+});
+
+const ResetPassword = ({navigation}) => {
   return (
     <SafeAreaView style={styles.main}>
       <ImageBackground
@@ -33,16 +49,45 @@ const ResetPassword = () => {
                 />
               </View>
 
-              <View style={styles.inputView}>
-                <Input1 label="Enter Password" keyboardType="phone-pad" />
-              </View>
-              <View style={styles.inputView}>
-                <Input1 label="Confirm Password" keyboardType="phone-pad" />
-              </View>
+              <Formik
+                validationSchema={passwordValidationSchema}
+                initialValues={{
+                  password: '',
+                  confirmPassword: '',
+                }}
+                onSubmit={async values => {
+                  console.log(values);
+                  navigation.navigate('ResetPassword');
+                }}>
+                {({values, handleSubmit, isValid, errors}) => (
+                  <>
+                    <View style={styles.inputView}>
+                      <Field
+                        component={Input1}
+                        name="password"
+                        label="Password"
+                        keyboardType="default"
+                        value={values.password}
+                        secureTextEntry={true}
+                      />
+                    </View>
+                    <View style={styles.inputView}>
+                      <Field
+                        component={Input1}
+                        name="confirmPassword"
+                        label="Confirm Password"
+                        keyboardType="default"
+                        value={values.confirmPassword}
+                        secureTextEntry={true}
+                      />
+                    </View>
 
-              <View style={styles.btn}>
-                <Buttons title="Submit" />
-              </View>
+                    <View style={styles.btn}>
+                      <Buttons title="Submit" onPress={handleSubmit} />
+                    </View>
+                  </>
+                )}
+              </Formik>
             </View>
           </ScrollView>
         </KeyboardAvoidingView>

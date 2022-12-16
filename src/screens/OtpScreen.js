@@ -9,10 +9,10 @@ import {
   View,
 } from 'react-native';
 import React from 'react';
-import Input1 from '../components/TextInputs/textInputs';
+import {Input2} from '../components/TextInputs/textInputs';
 import Buttons from '../components/Buttons/Buttons';
 
-const OtpScreen = () => {
+const OtpScreen = ({navigation}) => {
   return (
     <SafeAreaView style={styles.main}>
       <ImageBackground
@@ -38,7 +38,17 @@ const OtpScreen = () => {
               </View>
 
               <View style={styles.inputView}>
-                <Input1 label="Enter OTP" keyboardType="phone-pad" />
+                <Input2
+                  label="Enter OTP"
+                  keyboardType="phone-pad"
+                  onChangeText={val => {
+                    if (val.length === 4) {
+                      console.log('all set');
+                      navigation.navigate('ResetPassword');
+                    }
+                  }}
+                  maxLength={4}
+                />
               </View>
               <View style={styles.forgetpassView}>
                 <Text style={styles.forhetText}>Resend OTP</Text>
@@ -74,13 +84,13 @@ const styles = StyleSheet.create({
     color: '#FFFFFF',
     fontSize: 25,
     fontFamily: 'AvenirLTStd-Book',
-    marginVertical:5
+    marginVertical: 5,
   },
   textView: {
     width: '90%',
 
     alignItems: 'center',
-    marginTop:20
+    marginTop: 20,
   },
   imgView: {
     width: '100%',
@@ -114,9 +124,4 @@ const styles = StyleSheet.create({
     alignSelf: 'center',
     marginVertical: 10,
   },
-  
-
-
-  
-  
 });

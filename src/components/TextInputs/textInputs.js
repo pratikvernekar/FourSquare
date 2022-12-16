@@ -1,17 +1,51 @@
 import React from 'react';
-import {
-  Image,
-  ImageBackground,
-  SafeAreaView,
-  ScrollView,
-  StyleSheet,
-  Text,
-  View,
-} from 'react-native';
+import {StyleSheet, Text, View} from 'react-native';
 import {TextField} from 'rn-material-ui-textfield';
 
-const Input1 = props => {
-  
+export const Input1 = props => {
+  const {
+    field: {name, onBlur, onChange, value},
+    form: {errors, touched, setFieldTouched},
+    ...inputProps
+  } = props;
+//c//onsole.log('---',props.inputProps);
+  const hasError = errors[name] && touched[name];
+  return (
+    <View style={{width: '100%'}}>
+      <View style={[hasError && styles.errorInput]}>
+        <TextField
+          textColor="white"
+          style={{
+            color: 'white',
+            fontFamily: 'AvenirLTStd-Book',
+            textAlign: 'center',
+          }}
+          containerStyle={{width: '100%', alignSelf: 'center'}}
+          baseColor="#b5abab"
+          tintColor="#b5abab"
+          labelTextStyle={{
+            alignSelf: 'center',
+            fontFamily: 'AvenirLTStd-Book',
+            width: '100%',
+            textAlign: 'center',
+          }}
+          fontSize={18}
+          labelFontSize={18}
+          activeLineWidth={1}
+          onChangeText={text => onChange(name)(text)}
+          onBlur={() => {
+            setFieldTouched(name);
+            onBlur(name);
+          }}
+           {...inputProps}
+        />
+      </View>
+      {hasError && <Text style={styles.errorText}>{errors[name]}</Text>}
+    </View>
+  );
+};
+
+export const Input2 = props => {
   return (
     <TextField
       textColor="white"
@@ -26,20 +60,30 @@ const Input1 = props => {
       labelTextStyle={{
         alignSelf: 'center',
         fontFamily: 'AvenirLTStd-Book',
-
         width: '100%',
         textAlign: 'center',
       }}
-      label={props.label}
-      keyboardType={props.keyboardType}
       fontSize={18}
       labelFontSize={18}
       activeLineWidth={1}
       disabledLineWidth={1}
+      label={props.label}
+      keyboardType={props.keyboardType}
+      maxLength={props.maxLength}
+      onChangeText={props.onChangeText}
+      secureTextEntry={props.secureTextEntry}
     />
   );
 };
 
-export default Input1;
+const styles = StyleSheet.create({
+  errorText: {
+    color: 'red',
+    alignSelf: 'center',
+    fontSize: 10,
+    fontFamily: 'AvenirLTStd-Book',
 
-const styles = StyleSheet.create({});
+    position: 'absolute',
+    bottom: -7,
+  },
+});

@@ -4,17 +4,39 @@ import {
   KeyboardAvoidingView,
   SafeAreaView,
   ScrollView,
+  StatusBar,
   StyleSheet,
   Text,
+  TouchableOpacity,
   View,
 } from 'react-native';
 import React from 'react';
-import Input1 from '../components/TextInputs/textInputs';
+import {Input1} from '../components/TextInputs/textInputs';
 import Buttons from '../components/Buttons/Buttons';
+import {Formik, Field} from 'formik';
+import * as yup from 'yup';
 
-const LoginScreen = () => {
+const loginValidationSchema = yup.object().shape({
+  email: yup
+    .string()
+    .matches(
+      /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/,
+      'Email must have a number, special character, small and capital alphabets.',
+    )
+    .required('Email is required'),
+  password: yup
+    .string()
+    .matches(/\w*[a-z]\w*/, 'Password must have a small letter')
+    .matches(/\w*[A-Z]\w*/, 'Password must have a capital letter')
+    .matches(/\d/, 'Password must have a number')
+    .min(6, ({min}) => `Password must be at least ${min} characters`)
+    .required('Password is required'),
+});
+
+const LoginScreen = ({navigation}) => {
   return (
     <SafeAreaView style={styles.main}>
+      <StatusBar backgroundColor="#310D20" />
       <ImageBackground
         blurRadius={7}
         resizeMode="cover"
@@ -35,21 +57,54 @@ const LoginScreen = () => {
                   style={styles.img}
                 />
               </View>
-              <View style={styles.inputView}>
-                <Input1 label="Email" keyboardType="default" />
-              </View>
-              <View style={styles.inputView}>
-                <Input1 label="Password" keyboardType="phone-pad" />
-              </View>
-              <View style={styles.forgetpassView}>
-                <Text style={styles.forhetText}>Forgot Password?</Text>
-              </View>
-              <View style={styles.btn}>
-                <Buttons title="Login" />
-              </View>
-              <View style={styles.creatAccView}>
-                <Text style={styles.createText}>Create Account</Text>
-              </View>
+              <Formik
+                validationSchema={loginValidationSchema}
+                initialValues={{
+                  email: '',
+                  password: '',
+                }}
+                onSubmit={async values => {
+                  console.log(values);
+                  navigation.navigate('TopNav');
+                }}>
+                {({values, handleSubmit, isValid, errors}) => (
+                  <>
+                    <View style={styles.inputView}>
+                      <Field
+                        component={Input1}
+                        name="email"
+                        value={values.email}
+                        label="Email"
+                        keyboardType="email-address"
+                      />
+                    </View>
+                    <View style={styles.inputView}>
+                      <Field
+                        component={Input1}
+                        name="password"
+                        label="Password"
+                        keyboardType="default"
+                        value={values.password}
+                      />
+                    </View>
+                    <TouchableOpacity
+                      onPress={() => navigation.navigate('OtpScreen')}>
+                      <View style={styles.forgetpassView}>
+                        <Text style={styles.forhetText}>Forgot Password?</Text>
+                      </View>
+                    </TouchableOpacity>
+                    <View style={styles.btn}>
+                      <Buttons title="Login" onPress={handleSubmit} />
+                    </View>
+                  </>
+                )}
+              </Formik>
+              <TouchableOpacity onPress={() => navigation.navigate('Register')}>
+                <View style={styles.creatAccView}>
+                  <Text style={styles.createText}>Create Account</Text>
+                </View>
+              </TouchableOpacity>
+
               <View style={styles.orView}>
                 <Text style={styles.orText}>OR</Text>
               </View>
@@ -106,7 +161,6 @@ const styles = StyleSheet.create({
     width: 350,
     marginTop: 15,
     alignItems: 'center',
-    alignSelf: 'center',
   },
   forgetpassView: {
     width: '100%',
@@ -121,7 +175,6 @@ const styles = StyleSheet.create({
   },
   btn: {
     width: 350,
-    alignSelf: 'center',
   },
   creatAccView: {
     alignSelf: 'center',
@@ -152,7 +205,6 @@ const styles = StyleSheet.create({
     width: 385,
     paddingHorizontal: 10,
     marginVertical: 30,
-   
   },
   bottomImg: {
     width: 170,

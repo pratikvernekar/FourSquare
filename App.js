@@ -1,12 +1,21 @@
+import {NavigationContainer} from '@react-navigation/native';
 import React from 'react';
-
+import TopNavigation from './src/Navigations/TopNavigation';
+import IndividualRestaurant from './src/screens/IndividualRestaurantScreen';
 import LoginScreen from './src/screens/LoginScreen';
-import OtpScreen from './src/screens/OtpScreen';
-import Register from './src/screens/RegisterScreen';
-import ResetPassword from './src/screens/ResetPasswordScreen';
+import TopNavScreen from './src/screens/TopNavScreen';
+import StackNav from './src/Navigations/StackNav';
+
+
+
 
 const App = () => {
-  return <LoginScreen />;
+  return (
+    <NavigationContainer>
+      <StackNav/>
+    </NavigationContainer>
+    
+  );
 };
 
 export default App;
