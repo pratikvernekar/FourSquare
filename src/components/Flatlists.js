@@ -22,7 +22,7 @@ const Flatlists1 = ({navigation, data}) => {
       : '66%';
   const renderItem = ({item}) => (
     <TouchableOpacity
-      onPress={() => navigation.navigate('IndividualRestaurant',item._id)}>
+      onPress={() => navigation.navigate('IndividualRestaurant', item._id)}>
       <View style={styles.main}>
         <View style={{width: 130, height: '100%'}}>
           <Image
@@ -43,13 +43,20 @@ const Flatlists1 = ({navigation, data}) => {
             <Text style={{color: 'white'}}>{item.rating}</Text>
           </View>
           <Text style={styles.text2}>
-            Indian • ₹₹₹₹₹{' '}
-            {(item.distance.calculated / 1609).toFixed(2)} m
+            Indian •{' '}
+            {item.priceRange > 750
+              ? '₹₹₹₹'
+              : item.priceRange > 500
+              ? '₹₹₹'
+              : item.priceRange > 250
+              ? '₹₹'
+              : '₹'}{' '}
+            {(item.distance.calculated / 1609).toFixed(2)} Km
           </Text>
           <View style={{flexDirection: 'row'}}>
             <Text style={styles.text3}>
               {item.address.length > 25
-                ? item.address.substring(0, 44) + '...'
+                ? item.address.substring(0, 35) + '...'
                 : item.address}
               ,{item.city}
             </Text>
@@ -159,7 +166,8 @@ const styles = StyleSheet.create({
     color: '#7C7C7C',
     fontSize: 16,
     fontFamily: 'AvenirLTStd-Book',
-    marginLeft: 10,
+    paddingLeft: 10,
+    width: '100%',
   },
   mainReview: {
     backgroundColor: 'white',

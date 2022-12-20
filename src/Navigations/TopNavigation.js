@@ -8,7 +8,10 @@ import {
 import React from 'react';
 import {createMaterialTopTabNavigator} from '@react-navigation/material-top-tabs';
 import NearyouScreen from '../screens/NearyouScreen';
-import Toppick from '../screens/Toppick';
+import Toppick from '../screens/ToppickScreen';
+import Popular from '../screens/PopularScreen';
+import Lunch from '../screens/LunchScreen';
+import Coffee from '../screens/CoffeeScreen';
 
 const Tab = createMaterialTopTabNavigator();
 
@@ -43,9 +46,10 @@ const TopNavigation = ({navigation}) => {
       }}>
       <Tab.Screen name="NearYou" component={NearyouScreen} />
       <Tab.Screen name="TopPick" component={Toppick} />
-      <Tab.Screen name="Popular" component={Toppick} />
-      <Tab.Screen name="Lunch" component={Toppick} />
-      <Tab.Screen name="Coffee" component={Toppick} />
+      <Tab.Screen name="Popular" component={Popular} />
+      <Tab.Screen name="Lunch" component={Lunch} />
+      <Tab.Screen name="Coffee" component={Coffee} />
+      
     </Tab.Navigator>
   );
 };

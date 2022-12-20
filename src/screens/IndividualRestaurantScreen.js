@@ -87,7 +87,8 @@ const IndividualRestaurant = ({navigation, route}) => {
         showsVerticalScrollIndicator={false}>
         <ImageBackground
           style={[styles.ImageBackground, {height: imgHeight}]}
-          source={{uri:'https'+particularPlace?.placeImage?.substring(4)}}>
+          source={{uri:'https'+particularPlace.placeImage?.substring(4)}}
+          >
           <View style={styles.header}>
             <TouchableOpacity onPressOut={() => navigation.goBack()}>
               <Image
@@ -96,7 +97,7 @@ const IndividualRestaurant = ({navigation, route}) => {
               />
             </TouchableOpacity>
 
-            <Text style={styles.headetText}>Attil</Text>
+            <Text style={styles.headetText}>{particularPlace.placeName}</Text>
             <View style={styles.shareFavView}>
               <Image
                 style={{height: 22, width: 22}}
@@ -115,13 +116,13 @@ const IndividualRestaurant = ({navigation, route}) => {
               alignSelf: 'center',
             }}>
             <Text style={styles.restroText}>
-              IndividualRestaurant,IndividualRestaurant,IndividualRestaurant
+            {particularPlace.category}
             </Text>
           </View>
           <View style={[styles.starView]}>
             <AirbnbRating
               count={5}
-              defaultRating={3}
+              defaultRating={particularPlace.rating}
               size={14}
               isDisabled={true}
               showRating={false}
@@ -163,12 +164,7 @@ const IndividualRestaurant = ({navigation, route}) => {
         <View style={styles.textContainerView}>
           <ScrollView>
             <Text style={styles.containerText}>
-              Internal state is not preserved when content scrolls out of the
-              render window. Make sure all your data is captured in the item
-              data or external stores like Flux, Redux, or Relay. This is a
-              PureComponent which means that it will not re-render if props
-              remain shallow-equal. Make sure that everything your renderItem
-              function depends on is passed as a prop (e.g. extraData) that is
+            {particularPlace.overview}
             </Text>
           </ScrollView>
         </View>
@@ -208,8 +204,8 @@ const IndividualRestaurant = ({navigation, route}) => {
                   height: Platform.OS === 'ios' ? 170 : 180,
                   justifyContent: 'center',
                 }}>
-                <Text style={styles.mapText}>Dagdhad</Text>
-                <Text style={styles.mapText}>+91 1234567890</Text>
+                <Text style={styles.mapText}>{particularPlace.city}</Text>
+                <Text style={styles.mapText}>+91 {particularPlace.placePhone}</Text>
                 <Text style={styles.mapText}>Drive:9km</Text>
               </LinearGradient>
             </>
@@ -358,7 +354,7 @@ const styles = StyleSheet.create({
     height: 120,
     marginTop: 17,
     alignSelf: 'center',
-    paddingBottom: 1,
+    paddingBottom: 3,
   },
   containerText: {
     color: '#8d8d8d',

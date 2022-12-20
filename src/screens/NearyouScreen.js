@@ -17,9 +17,12 @@ import React, {useEffect, useRef, useState} from 'react';
 import MapView, {Marker} from 'react-native-maps';
 import {Flatlists1} from '../components/Flatlists';
 import {getNearPlaces} from '../services/Places';
+import {useDispatch} from 'react-redux';
+import {setLatLong} from '../redux/AuthSlice';
 
 const NearyouScreen = ({navigation}) => {
   const mapRef = useRef(null);
+  const dispatch = useDispatch();
   const [nearPlaces, setNearPlaces] = useState([]);
   const [loading, setLoading] = useState(false);
   const [currentLongitude, setCurrentLongitude] = useState('');
@@ -89,6 +92,11 @@ const NearyouScreen = ({navigation}) => {
         Toast.show('You are Here');
         const currentLongitude = position.coords.longitude;
         const currentLatitude = position.coords.latitude;
+        const obj = {
+          lat: position.coords.latitude,
+          long: position.coords.longitude,
+        };
+        dispatch(setLatLong(obj));
         setCurrentLongitude(currentLongitude);
         setCurrentLatitude(currentLatitude);
       },
