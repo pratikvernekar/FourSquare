@@ -8,11 +8,38 @@ import {
   Text,
   View,
 } from 'react-native';
-import React from 'react';
+import React, {useEffect, useState} from 'react';
 import {Input2} from '../components/TextInputs/textInputs';
 import Buttons from '../components/Buttons/Buttons';
+import {useRoute} from '@react-navigation/native';
+import {sendOtp, verifyOtp} from '../services/UserAuth';
+import Toast from 'react-native-simple-toast';
 
 const OtpScreen = ({navigation}) => {
+  const [otp, setOtp] = useState('');
+  const [email, setEmail] = useState('');
+  const route = useRoute();
+
+  // useEffect(() => {
+  //   setTimeout(async () => {
+  //    const response = await sendOtp(route.params.email);
+  //    console.log(response);
+
+  //   }, 500);
+  // }, []);
+  console.log('000', route.params.email);
+  const verify = async () => {
+    const response = await verifyOtp(otp);
+    console.log(response);
+    if (true == true) {
+      setEmail(route.params.email);
+      //console.log(email);
+      const obj={email:route.params.email}
+      navigation.navigate('ResetPassword', obj);
+    } else {
+      Toast.show('Enter the correct OTP');
+    }
+  };
   return (
     <SafeAreaView style={styles.main}>
       <ImageBackground
@@ -42,19 +69,18 @@ const OtpScreen = ({navigation}) => {
                   label="Enter OTP"
                   keyboardType="phone-pad"
                   onChangeText={val => {
-                    if (val.length === 4) {
-                      console.log('all set');
-                      navigation.navigate('ResetPassword');
+                    if (val.length === 6) {
+                      setOtp(val);
                     }
                   }}
-                  maxLength={4}
+                  maxLength={6}
                 />
               </View>
               <View style={styles.forgetpassView}>
                 <Text style={styles.forhetText}>Resend OTP</Text>
               </View>
               <View style={styles.btn}>
-                <Buttons title="Get in !" />
+                <Buttons title="Get in !" onPress={verify} />
               </View>
             </View>
           </ScrollView>
@@ -103,7 +129,7 @@ const styles = StyleSheet.create({
     height: 100,
   },
   inputView: {
-    width: 350,
+    width: '90%',
     marginTop: 15,
     alignItems: 'center',
     alignSelf: 'center',

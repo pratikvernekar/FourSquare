@@ -1,11 +1,11 @@
 import {StyleSheet, Text, View} from 'react-native';
 import React from 'react';
-import Flatlists from '../components/Flatlists';
+import Flatlists, { Flatlists1 } from '../components/Flatlists';
 
 const Toppick = ({navigation}) => {
   return (
     <View style={{flex: 1}}>
-      <Flatlists navigation={navigation}/>
+      <Flatlists1 navigation={navigation}/>
     </View>
   );
 };

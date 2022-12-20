@@ -80,10 +80,12 @@ const styles = StyleSheet.create({
   errorText: {
     color: 'red',
     alignSelf: 'center',
-    fontSize: 10,
+    fontSize: 12,
     fontFamily: 'AvenirLTStd-Book',
+    
 
     position: 'absolute',
-    bottom: -7,
+    bottom: -21,
+    textAlign:'center'
   },
 });

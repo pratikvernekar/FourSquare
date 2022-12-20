@@ -15,6 +15,10 @@ import {Input1} from '../components/TextInputs/textInputs';
 import Buttons from '../components/Buttons/Buttons';
 import {Formik, Field} from 'formik';
 import * as yup from 'yup';
+import {checkIn} from '../services/UserAuth';
+import Toast from 'react-native-simple-toast';
+import { useDispatch } from 'react-redux';
+import { login } from '../redux/AuthSlice';
 
 const loginValidationSchema = yup.object().shape({
   email: yup
@@ -32,8 +36,20 @@ const loginValidationSchema = yup.object().shape({
     .min(6, ({min}) => `Password must be at least ${min} characters`)
     .required('Password is required'),
 });
+const initialValues = {
+  email: '',
+  password: '',
+};
 
 const LoginScreen = ({navigation}) => {
+  const dispatch=useDispatch()
+  const forgotPassword = email => {
+    if (email !== '') {
+      navigation.navigate('OtpScreen',{email});
+    } else {
+      Toast.show('Enter the email');
+    }
+  };
   return (
     <SafeAreaView style={styles.main}>
       <StatusBar backgroundColor="#310D20" />
@@ -59,13 +75,18 @@ const LoginScreen = ({navigation}) => {
               </View>
               <Formik
                 validationSchema={loginValidationSchema}
-                initialValues={{
-                  email: '',
-                  password: '',
-                }}
-                onSubmit={async values => {
-                  console.log(values);
-                  navigation.navigate('TopNav');
+                initialValues={initialValues}
+                onSubmit={async (values, {resetForm}) => {
+                  const response = await checkIn(values);
+                  console.log(response);
+                  if (response === undefined) {
+                    Toast.show('Login Unsuccessfull');
+                  } else {
+                    dispatch(login(response))
+                    Toast.show('Login Successfull');
+                    navigation.navigate('TopNav');
+                    resetForm({initialValues});
+                  }
                 }}>
                 {({values, handleSubmit, isValid, errors}) => (
                   <>
@@ -88,7 +109,7 @@ const LoginScreen = ({navigation}) => {
                       />
                     </View>
                     <TouchableOpacity
-                      onPress={() => navigation.navigate('OtpScreen')}>
+                      onPress={() => forgotPassword(values.email)}>
                       <View style={styles.forgetpassView}>
                         <Text style={styles.forhetText}>Forgot Password?</Text>
                       </View>
@@ -109,14 +130,18 @@ const LoginScreen = ({navigation}) => {
                 <Text style={styles.orText}>OR</Text>
               </View>
               <View style={styles.social}>
-                <Image
-                  source={require('../assets/images/facebook_btn.png')}
-                  style={styles.bottomImg}
-                />
-                <Image
-                  source={require('../assets/images/g+_btn.png')}
-                  style={styles.bottomImg}
-                />
+                <TouchableOpacity>
+                  <Image
+                    source={require('../assets/images/facebook_btn.png')}
+                    style={styles.bottomImg}
+                  />
+                </TouchableOpacity>
+                <TouchableOpacity>
+                  <Image
+                    source={require('../assets/images/g+_btn.png')}
+                    style={styles.bottomImg}
+                  />
+                </TouchableOpacity>
               </View>
             </View>
           </ScrollView>
@@ -158,7 +183,7 @@ const styles = StyleSheet.create({
     height: 100,
   },
   inputView: {
-    width: 350,
+    width: '90%',
     marginTop: 15,
     alignItems: 'center',
   },

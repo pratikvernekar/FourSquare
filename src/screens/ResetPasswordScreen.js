@@ -13,6 +13,9 @@ import {Input1} from '../components/TextInputs/textInputs';
 import Buttons from '../components/Buttons/Buttons';
 import {Formik, Field} from 'formik';
 import * as yup from 'yup';
+import {useRoute} from '@react-navigation/native';
+import {forgotPassword} from '../services/UserAuth';
+import Toast from 'react-native-simple-toast';
 
 const passwordValidationSchema = yup.object().shape({
   password: yup
@@ -27,8 +30,14 @@ const passwordValidationSchema = yup.object().shape({
     .oneOf([yup.ref('password')], 'Password do not match')
     .required('Confirm Password is required'),
 });
+const initialValues = {
+  password: '',
+  confirmPassword: '',
+};
 
 const ResetPassword = ({navigation}) => {
+  const route = useRoute();
+
   return (
     <SafeAreaView style={styles.main}>
       <ImageBackground
@@ -51,13 +60,15 @@ const ResetPassword = ({navigation}) => {
 
               <Formik
                 validationSchema={passwordValidationSchema}
-                initialValues={{
-                  password: '',
-                  confirmPassword: '',
-                }}
-                onSubmit={async values => {
-                  console.log(values);
-                  navigation.navigate('ResetPassword');
+                initialValues={initialValues}
+                onSubmit={async (values, {resetForm}) => {
+                  const response = await forgotPassword(
+                    values.password,
+                    route.params?.email,
+                  );
+                  Toast.show(response.message);
+                  resetForm({initialValues})
+                  navigation.navigate('LoginScreen');
                 }}>
                 {({values, handleSubmit, isValid, errors}) => (
                   <>
@@ -124,7 +135,7 @@ const styles = StyleSheet.create({
     height: 100,
   },
   inputView: {
-    width: 350,
+    width: '90%',
     marginTop: 15,
     alignItems: 'center',
     alignSelf: 'center',

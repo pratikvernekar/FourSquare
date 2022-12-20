@@ -9,19 +9,32 @@ import {
   Platform,
   Pressable,
   TouchableOpacity,
+  ActivityIndicator,
+  PermissionsAndroid,
+  Modal,
 } from 'react-native';
-import React from 'react';
+import React, {useEffect, useRef, useState} from 'react';
 import {ScrollView} from 'react-native-gesture-handler';
 import MapView, {Marker} from 'react-native-maps';
-import {Rating, AirbnbRating} from 'react-native-ratings';
+import {AirbnbRating} from 'react-native-ratings';
+import LinearGradient from 'react-native-linear-gradient';
+import Geolocation from '@react-native-community/geolocation';
+import Toast from 'react-native-simple-toast';
+import {getParticularPlace} from '../services/Places';
 
-const IndividualRestaurant = ({navigation}) => {
+const IndividualRestaurant = ({navigation, route}) => {
+  const [particularPlace, setParticularPlace] = useState({});
+  const [modal, setModal] = useState(false);
+  const [loadingScreen, setLoadingScreen] = useState(false);
+  const mapRef = useRef(null);
+  const [currentLongitude, setCurrentLongitude] = useState('');
+  const [currentLatitude, setCurrentLatitude] = useState('');
   const {height, width} = useWindowDimensions();
   const imgHeight =
     width > height
       ? Platform.OS === 'ios'
-        ? 130
-        : 130
+        ? 250
+        : 250
       : Platform.OS === 'ios'
       ? 250
       : 250;
@@ -33,59 +46,98 @@ const IndividualRestaurant = ({navigation}) => {
       : Platform.OS === 'ios'
       ? '100%'
       : '100%';
+  useEffect(() => {
+    const getOneTimeLocation = () => {
+      setLoadingScreen(true);
+      setTimeout(async () => {
+        try {
+          const response = await getParticularPlace(route.params);
+          setParticularPlace(response);
+          setLoadingScreen(false);
+        } catch (error) {
+          Toast.show('Network Error');
+        }
+      }, 500);
+      error => {
+        console.log(error.message);
+      };  
+    };
+    getOneTimeLocation();
+
+  }, []);
+
+  const rate = () => {
+    // console.log('jj');
+    setModal(true);
+  };
+  if (loadingScreen) {
+    return (
+      <SafeAreaView
+        style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
+        <ActivityIndicator color="#351247" size="large" />
+      </SafeAreaView>
+    );
+  }
+  
   return (
     <SafeAreaView style={styles.main}>
-      <ImageBackground
-        style={[styles.ImageBackground, {height: imgHeight}]}
-        source={require('../assets/images/background.png')}>
-        <View style={styles.header}>
-          <TouchableOpacity onPressOut={()=>navigation.goBack()}>
-            <Image
-              style={{height: 22, width: 22}}
-              source={require('../assets/images/back_icon.png')}
-            />
-          </TouchableOpacity>
+      <ScrollView
+        style={{flex: 1, width: '100%'}}
+        showsHorizontalScrollIndicator={false}
+        showsVerticalScrollIndicator={false}>
+        <ImageBackground
+          style={[styles.ImageBackground, {height: imgHeight}]}
+          source={{uri:'https'+particularPlace?.placeImage?.substring(4)}}>
+          <View style={styles.header}>
+            <TouchableOpacity onPressOut={() => navigation.goBack()}>
+              <Image
+                style={{height: 22, width: 22}}
+                source={require('../assets/images/back_icon.png')}
+              />
+            </TouchableOpacity>
 
-          <Text style={styles.headetText}>Attil</Text>
-          <View style={styles.shareFavView}>
-            <Image
-              style={{height: 22, width: 22}}
-              source={require('../assets/images/share_icon.png')}
-            />
-            <Image
-              style={{height: 22, width: 22, resizeMode: 'contain'}}
-              source={require('../assets/images/favourite_icon.png')}
+            <Text style={styles.headetText}>Attil</Text>
+            <View style={styles.shareFavView}>
+              <Image
+                style={{height: 22, width: 22}}
+                source={require('../assets/images/share_icon.png')}
+              />
+              <Image
+                style={{height: 22, width: 22, resizeMode: 'contain'}}
+                source={require('../assets/images/favourite_icon.png')}
+              />
+            </View>
+          </View>
+          <View
+            style={{
+              marginTop: 140,
+              width: '85%',
+              alignSelf: 'center',
+            }}>
+            <Text style={styles.restroText}>
+              IndividualRestaurant,IndividualRestaurant,IndividualRestaurant
+            </Text>
+          </View>
+          <View style={[styles.starView]}>
+            <AirbnbRating
+              count={5}
+              defaultRating={3}
+              size={14}
+              isDisabled={true}
+              showRating={false}
             />
           </View>
-        </View>
-        <View
-          style={{
-            marginTop: 140,
-            width: '85%',
-            alignSelf: 'center',
-          }}>
-          <Text style={styles.restroText}>
-            IndividualRestaurant,IndividualRestaurant,IndividualRestaurant
-          </Text>
-        </View>
-        <View style={styles.starView}>
-          <AirbnbRating
-            count={5}
-            defaultRating={3}
-            size={14}
-            isDisabled={true}
-            showRating={false}
-          />
-        </View>
-      </ImageBackground>
-      <ScrollView style={{flex: 1, width: '100%'}}>
+        </ImageBackground>
+
         <View style={styles.ratingPhotosView}>
           <View>
-            <Image
-              style={{height: 50, width: 50}}
-              source={require('../assets/images/rating_icon.png')}
-            />
-            <Text style={styles.ratingText}> Rating</Text>
+            <Pressable onPress={rate}>
+              <Image
+                style={{height: 50, width: 50}}
+                source={require('../assets/images/rating_icon.png')}
+              />
+              <Text style={styles.ratingText}> Rating</Text>
+            </Pressable>
           </View>
           <View>
             <Image
@@ -117,42 +169,121 @@ const IndividualRestaurant = ({navigation}) => {
               PureComponent which means that it will not re-render if props
               remain shallow-equal. Make sure that everything your renderItem
               function depends on is passed as a prop (e.g. extraData) that is
-              not === after updates, otherwise your UI may not update on
-              changes. This includes the data prop and parent component state.
-              In order to constrain memory and enable smooth scrolling, content
-              is rendered asynchronously offscreen. This means it's possible to
-              scroll faster than the fill rate and momentarily see blank
-              content. This is a tradeoff that can be adjusted to suit the needs
-              of each application, and we are working on improving it behind the
-              scenes. By default, the list looks for a key prop on each item and
-              uses that for the React key. Alternatively, you can provide a
-              custom keyExtractor prop.
             </Text>
           </ScrollView>
         </View>
-
         <View style={[styles.mapView, {width: mapwidth}]}>
-          <MapView
-            style={styles.mapStyle}
-            initialRegion={{
-              latitude: 13.3409,
-              longitude: 74.7421,
-              latitudeDelta: 0.0922,
-              longitudeDelta: 0.0421,
-            }}
-            customMapStyle={mapStyle}>
-            <Marker
-              draggable
-              coordinate={{
-                latitude: 13.3409,
-                longitude: 74.7421,
-              }}
-              onDragEnd={e => alert(JSON.stringify(e.nativeEvent.coordinate))}
-              title={'Test Marker'}
-              description={'This is a description of the marker'}
-            />
-          </MapView>
+          {particularPlace?.location?.coordinates[0] &&
+          particularPlace?.location?.coordinates[1] !== '' ? (
+            <>
+              <MapView
+                style={styles.mapStyle}
+                customMapStyle={mapStyle}
+                initialRegion={{
+                  latitude: particularPlace.location?.coordinates[1],
+                  longitude: particularPlace.location?.coordinates[0],
+                  latitudeDelta: 0.04,
+                  longitudeDelta: 0.05,
+                }}>
+                <Marker
+                  draggable
+                  coordinate={{
+                    latitude: particularPlace.location?.coordinates[1],
+                    longitude: particularPlace.location?.coordinates[0],
+                    latitudeDelta: 0.04,
+                    longitudeDelta: 0.05,
+                  }}
+                  onDragEnd={e =>
+                    alert(JSON.stringify(e.nativeEvent.coordinate))
+                  }
+                  title={'Test Marker'}
+                />
+              </MapView>
+              <LinearGradient
+                start={{x: 0, y: 1}}
+                end={{x: 1, y: 1}}
+                locations={[0.1, 0.5]}
+                colors={['rgba(249, 245, 238 ,1)', 'rgba(249, 245, 238,0)']}
+                style={{
+                  height: Platform.OS === 'ios' ? 170 : 180,
+                  justifyContent: 'center',
+                }}>
+                <Text style={styles.mapText}>Dagdhad</Text>
+                <Text style={styles.mapText}>+91 1234567890</Text>
+                <Text style={styles.mapText}>Drive:9km</Text>
+              </LinearGradient>
+            </>
+          ) : null}
         </View>
+        <Modal visible={modal} animationType="fade" transparent={true}>
+          <View style={{flex: 1, backgroundColor: '#7A7A7A7C'}}>
+            <SafeAreaView
+              style={{flex: 1, alignItems: 'center', justifyContent: 'center'}}>
+              <View style={styles.modalContainer}>
+                <View style={styles.cancelView}>
+                  <Pressable onPress={() => setModal(false)}>
+                    <Image
+                      style={{
+                        height: 12,
+                        width: 12,
+                      }}
+                      source={require('../assets/images/close_icon_grey_xxxhdpi.png')}
+                    />
+                  </Pressable>
+                </View>
+
+                <Text
+                  style={{
+                    color: 'black',
+                    fontWeight: '600',
+                    fontSize: 20,
+                    fontFamily: 'AvenirLTStd-Book',
+                    marginTop: 40,
+                  }}>
+                  Overall rating
+                </Text>
+                <Text
+                  style={{
+                    color: '#36b000',
+                    fontWeight: '800',
+                    fontSize: 24,
+                    fontFamily: 'AvenirLTStd-Book',
+                    marginTop: 10,
+                  }}>
+                  4.5
+                </Text>
+                <Text
+                  style={{
+                    color: 'black',
+                    fontWeight: '600',
+                    fontSize: 20,
+                    fontFamily: 'AvenirLTStd-Book',
+                    marginTop: 50,
+
+                    textAlign: 'center',
+                  }}>
+                  How would you rate your experience?
+                </Text>
+                <View style={{marginTop: Platform.OS === 'ios' ? 20 : 10}}>
+                  <AirbnbRating
+                    count={5}
+                    defaultRating={3}
+                    size={20}
+                    isDisabled={true}
+                    showRating={false}
+                  />
+                </View>
+                <Pressable
+                  onPress={() => setModal(false)}
+                  style={{width: '100%', position: 'relative'}}>
+                  <View style={styles.btnSubmit}>
+                    <Text style={styles.btnTextSumit}>Submit</Text>
+                  </View>
+                </Pressable>
+              </View>
+            </SafeAreaView>
+          </View>
+        </Modal>
       </ScrollView>
       <View style={styles.btn}>
         <Pressable>
@@ -213,7 +344,6 @@ const styles = StyleSheet.create({
   },
   overView: {
     width: '90%',
-
     alignSelf: 'center',
     marginTop: 17,
   },
@@ -244,7 +374,7 @@ const styles = StyleSheet.create({
   },
   mapView: {
     backgroundColor: 'white',
-    height: Platform.OS === 'ios' ? 180 : 196.4,
+    height: Platform.OS === 'ios' ? 170 : 180,
     shadowColor: 'grey',
     shadowOffset: {
       width: 0,
@@ -254,19 +384,36 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.9,
     elevation: 10,
     alignSelf: 'center',
+    marginTop: 16.4,
+    justifyContent: 'center',
+    position: 'relative',
   },
 
   btn: {
     width: '100%',
-
     height: 64,
     backgroundColor: '#351247',
     justifyContent: 'center',
     alignItems: 'center',
   },
+  btnSubmit: {
+    width: '100%',
+    height: 50,
+    backgroundColor: '#ffffff',
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderTopWidth: 1,
+    borderColor: '#c7c7c7',
+    marginTop: 16,
+  },
   btnText: {
     color: 'white',
-    fontSize: 16,
+    fontSize: 20,
+    fontFamily: 'AvenirLTStd-Book',
+  },
+  btnTextSumit: {
+    color: '#351247',
+    fontSize: 20,
     fontFamily: 'AvenirLTStd-Book',
   },
   restroText: {
@@ -277,6 +424,36 @@ const styles = StyleSheet.create({
   },
   starView: {
     marginVertical: Platform.OS === 'ios' ? 5 : 3,
+  },
+  mapText: {
+    color: '#000000',
+    fontSize: 15,
+    marginLeft: 20,
+    marginVertical: 8,
+    fontFamily: 'AvenirLTStd-Book',
+  },
+  modalContainer: {
+    backgroundColor: 'white',
+    alignItems: 'center',
+    borderWidth: 1,
+    width: '80%',
+    height: 300,
+
+    borderColor: '#c7c7c7',
+    position: 'relative',
+  },
+  cancelView: {
+    position: 'absolute',
+    right: -10,
+    top: -10,
+    backgroundColor: 'white',
+    borderRadius: 15,
+    height: 25,
+    width: 25,
+    borderWidth: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderColor: 'grey',
   },
 });
 

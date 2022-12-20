@@ -12,7 +12,7 @@ import IndividualRestaurant from '../screens/IndividualRestaurantScreen';
 
 const Stack = createStackNavigator();
 
-function MyStack() {
+function AuthStack() {
   return (
     <Stack.Navigator initialRouteName="LoginScreen">
       <Stack.Screen name="LoginScreen" component={LoginScreen} 
@@ -48,4 +48,4 @@ function MyStack() {
     </Stack.Navigator>
   );
 }
-export default MyStack;
+export default AuthStack;

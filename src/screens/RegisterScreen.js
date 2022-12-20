@@ -5,7 +5,6 @@ import {
   SafeAreaView,
   ScrollView,
   StyleSheet,
-  Text,
   View,
 } from 'react-native';
 import React from 'react';
@@ -13,6 +12,8 @@ import {Input1} from '../components/TextInputs/textInputs';
 import Buttons from '../components/Buttons/Buttons';
 import {Formik, Field} from 'formik';
 import * as yup from 'yup';
+import {register} from '../services/UserAuth';
+import Toast from 'react-native-simple-toast';
 
 const registerValidationSchema = yup.object().shape({
   email: yup
@@ -41,6 +42,12 @@ const registerValidationSchema = yup.object().shape({
     .oneOf([yup.ref('password')], 'Password do not match')
     .required('Confirm Password is required'),
 });
+const initialValues = {
+  email: '',
+  mobile: '',
+  password: '',
+  confirmPassword: '',
+};
 
 const Register = ({navigation}) => {
   return (
@@ -66,15 +73,17 @@ const Register = ({navigation}) => {
               </View>
               <Formik
                 validationSchema={registerValidationSchema}
-                initialValues={{
-                  email: '',
-                  mobile: '',
-                  password: '',
-                  confirmPassword: '',
-                }}
-                onSubmit={async values => {
-                  console.log(values);
-                  navigation.navigate('OtpScreen');
+                initialValues={initialValues}
+                onSubmit={async (values, {resetForm}) => {
+                  const response = await register(values);
+
+                  if (response === undefined) {
+                    Toast.show('User already exist..');
+                    navigation.navigate('LoginScreen');
+                    resetForm({initialValues});
+                  } else {
+                    Toast.show('Registration Successfull');
+                  }
                 }}>
                 {({values, handleSubmit, isValid, errors}) => (
                   <>
@@ -117,7 +126,7 @@ const Register = ({navigation}) => {
                       />
                     </View>
                     <View style={styles.btn}>
-                      <Buttons title="Submit" onPress={handleSubmit} />
+                      <Buttons title="Login" onPress={handleSubmit} />
                     </View>
                   </>
                 )}
@@ -158,7 +167,7 @@ const styles = StyleSheet.create({
     height: 100,
   },
   inputView: {
-    width: 350,
+    width: '90%',
     marginVertical: 4,
     alignItems: 'center',
     alignSelf: 'center',
