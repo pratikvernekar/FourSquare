@@ -20,18 +20,18 @@ const OtpScreen = ({navigation}) => {
   const [email, setEmail] = useState('');
   const route = useRoute();
 
-  // useEffect(() => {
-  //   setTimeout(async () => {
-  //    const response = await sendOtp(route.params.email);
-  //    console.log(response);
+  useEffect(() => {
+    setTimeout(async () => {
+     const response = await sendOtp(route.params.email);
+     console.log(response);
 
-  //   }, 500);
-  // }, []);
+    }, 500);
+  }, []);
   console.log('000', route.params.email);
   const verify = async () => {
     const response = await verifyOtp(otp);
     console.log(response);
-    if (true == true) {
+    if (response.message == true) {
       setEmail(route.params.email);
       //console.log(email);
       const obj={email:route.params.email}

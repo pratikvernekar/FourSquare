@@ -22,7 +22,15 @@ const Flatlists1 = ({navigation, data}) => {
       : '66%';
   const renderItem = ({item}) => (
     <TouchableOpacity
-      onPress={() => navigation.navigate('IndividualRestaurant', item._id)}>
+      onPress={() =>
+        navigation.navigate(
+          'IndividualRestaurant',
+          (obj = {
+            id: item._id,
+            distance: (item.distance.calculated / 1609).toFixed(2),
+          }),
+        )
+      }>
       <View style={styles.main}>
         <View style={{width: 130, height: '100%'}}>
           <Image
@@ -40,7 +48,7 @@ const Flatlists1 = ({navigation, data}) => {
             />
           </View>
           <View style={styles.batch}>
-            <Text style={{color: 'white'}}>{item.rating}</Text>
+            <Text style={{color: 'white'}}>{item.rating * 2}</Text>
           </View>
           <Text style={styles.text2}>
             Indian •{' '}
@@ -76,19 +84,20 @@ const Flatlists1 = ({navigation, data}) => {
   );
 };
 
-const ReviewList = () => {
+const ReviewList = ({data}) => {
+  console.log(data);
   const renderItem = ({item}) => (
     <TouchableOpacity onPress={() => console.log('d')}>
-      <View style={styles.mainReview}>
+      <View style={styles.mainReview} >
         <Image
           style={{
             height: 40,
             width: 40,
             borderRadius: 50,
-            marginTop: 22,
+            marginTop: 15,
             marginLeft: 18,
           }}
-          source={require('../assets/images/background.png')}
+          source={{uri: item.reviewerImage}}
         />
 
         <View
@@ -97,23 +106,25 @@ const ReviewList = () => {
             width: '86%',
             height: 80,
             alignSelf: 'center',
+           
+            paddingHorizontal: 10,
           }}>
           <View style={styles.textContainer}>
-            <Text style={styles.text1}>{item.title}</Text>
-            <Text style={styles.text2}>{item.title}</Text>
+            <Text style={styles.text1}>{item.reviewBy}</Text>
+            <Text style={styles.text2}>{item.reviewDate.substring(0, 10)}</Text>
           </View>
 
-          <Text style={styles.text3}>{item.title}</Text>
-          <Text style={styles.text3}>{item.title}</Text>
+          <Text style={styles.text3}>{item.review}</Text>
+          {/* <Text style={styles.text3}>{item.reviewBy}</Text> */}
         </View>
       </View>
     </TouchableOpacity>
   );
   return (
     <FlatList
-      data={DATA}
+      data={data}
       renderItem={renderItem}
-      keyExtractor={item => item.id}
+      keyExtractor={item => item.reviewerId}
       showsHorizontalScrollIndicator={false}
       showsVerticalScrollIndicator={false}
     />
@@ -171,7 +182,7 @@ const styles = StyleSheet.create({
   },
   mainReview: {
     backgroundColor: 'white',
-    height: 100,
+    height: 90,
     flexDirection: 'row',
     width: '100%',
     alignSelf: 'center',

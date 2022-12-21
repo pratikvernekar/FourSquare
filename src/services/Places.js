@@ -67,3 +67,32 @@ export const getCoffeePlace = async (lat, long) => {
     console.log('An error has occurred in get Coffee Restaurants');
   }
 };
+export const getReview = async id => {
+  try {
+    const response = await axios.post(`${BASE_URl}/getReview`, {
+      _id: id,
+    });
+    return response.data;
+  } catch (error) {
+    console.log('An error has occurred in getReview');
+  }
+};
+export const addReview = async (id, review, token) => {
+  try {
+    const response = await axios.post(
+      `${BASE_URl}/addReview`,
+      {
+        _id: id,
+        review: review,
+      },
+      {
+        headers: {
+          Authorization: `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6IkFiY0BnbWFpbC5jb20iLCJpYXQiOjE2NzE2Mjc3ODAsImV4cCI6MTY3MTYzMTM4MH0.AHjroDV01cliddxYfkYhy7tjTAgaQQ2y53DjsG0pkKk`,
+        },
+      },
+    );
+    return response.data;
+  } catch (error) {
+    console.log('An error has occurred in addReview');
+  }
+};

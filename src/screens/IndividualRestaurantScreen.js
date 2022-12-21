@@ -51,7 +51,7 @@ const IndividualRestaurant = ({navigation, route}) => {
       setLoadingScreen(true);
       setTimeout(async () => {
         try {
-          const response = await getParticularPlace(route.params);
+          const response = await getParticularPlace(route.params.id);
           setParticularPlace(response);
           setLoadingScreen(false);
         } catch (error) {
@@ -60,10 +60,9 @@ const IndividualRestaurant = ({navigation, route}) => {
       }, 500);
       error => {
         console.log(error.message);
-      };  
+      };
     };
     getOneTimeLocation();
-
   }, []);
 
   const rate = () => {
@@ -78,7 +77,7 @@ const IndividualRestaurant = ({navigation, route}) => {
       </SafeAreaView>
     );
   }
-  
+
   return (
     <SafeAreaView style={styles.main}>
       <ScrollView
@@ -87,8 +86,7 @@ const IndividualRestaurant = ({navigation, route}) => {
         showsVerticalScrollIndicator={false}>
         <ImageBackground
           style={[styles.ImageBackground, {height: imgHeight}]}
-          source={{uri:'https'+particularPlace.placeImage?.substring(4)}}
-          >
+          source={{uri: 'https' + particularPlace?.placeImage?.substring(4)}}>
           <View style={styles.header}>
             <TouchableOpacity onPressOut={() => navigation.goBack()}>
               <Image
@@ -97,7 +95,7 @@ const IndividualRestaurant = ({navigation, route}) => {
               />
             </TouchableOpacity>
 
-            <Text style={styles.headetText}>{particularPlace.placeName}</Text>
+            <Text style={styles.headetText}>{particularPlace?.placeName}</Text>
             <View style={styles.shareFavView}>
               <Image
                 style={{height: 22, width: 22}}
@@ -115,14 +113,12 @@ const IndividualRestaurant = ({navigation, route}) => {
               width: '85%',
               alignSelf: 'center',
             }}>
-            <Text style={styles.restroText}>
-            {particularPlace.category}
-            </Text>
+            <Text style={styles.restroText}>{particularPlace?.category}</Text>
           </View>
           <View style={[styles.starView]}>
             <AirbnbRating
               count={5}
-              defaultRating={particularPlace.rating}
+              defaultRating={particularPlace?.rating}
               size={14}
               isDisabled={true}
               showRating={false}
@@ -147,16 +143,24 @@ const IndividualRestaurant = ({navigation, route}) => {
             />
             <Text style={styles.ratingText}>Photos</Text>
           </View>
-          <View>
-            <Image
-              style={{
-                height: 50,
-                width: 50,
-              }}
-              source={require('../assets/images/review_icon.png')}
-            />
-            <Text style={styles.ratingText}>Review</Text>
-          </View>
+          <Pressable
+            onPress={() =>
+              navigation.navigate('Review', {
+                id: route.params.id,
+                placeName: particularPlace?.placeName,
+              })
+            }>
+            <View>
+              <Image
+                style={{
+                  height: 50,
+                  width: 50,
+                }}
+                source={require('../assets/images/review_icon.png')}
+              />
+              <Text style={styles.ratingText}>Review</Text>
+            </View>
+          </Pressable>
         </View>
         <View style={styles.overView}>
           <Text style={styles.overViewText}>OverView</Text>
@@ -164,7 +168,7 @@ const IndividualRestaurant = ({navigation, route}) => {
         <View style={styles.textContainerView}>
           <ScrollView>
             <Text style={styles.containerText}>
-            {particularPlace.overview}
+              {particularPlace?.overview}
             </Text>
           </ScrollView>
         </View>
@@ -204,9 +208,13 @@ const IndividualRestaurant = ({navigation, route}) => {
                   height: Platform.OS === 'ios' ? 170 : 180,
                   justifyContent: 'center',
                 }}>
-                <Text style={styles.mapText}>{particularPlace.city}</Text>
-                <Text style={styles.mapText}>+91 {particularPlace.placePhone}</Text>
-                <Text style={styles.mapText}>Drive:9km</Text>
+                <Text style={styles.mapText}>{particularPlace?.city}</Text>
+                <Text style={styles.mapText}>
+                  +91 {particularPlace?.placePhone}
+                </Text>
+                <Text style={styles.mapText}>
+                  Drive: {route.params.distance} Km
+                </Text>
               </LinearGradient>
             </>
           ) : null}

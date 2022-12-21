@@ -5,6 +5,7 @@ import {
   View,
   Image,
   StatusBar,
+  Pressable,
 } from 'react-native';
 import React from 'react';
 import TopNavigation from '../Navigations/TopNavigation';
@@ -14,10 +15,13 @@ const TopNavScreen = ({navigation}) => {
     <SafeAreaView style={styles.main}>
       <StatusBar backgroundColor="#310D20" />
       <View style={styles.header}>
-        <Image
-          source={require('../assets/images/menu_icon.png')}
-          style={styles.imgMenu}
-        />
+        <Pressable onPress={()=>navigation.openDrawer()}>
+          <Image
+            source={require('../assets/images/menu_icon.png')}
+            style={styles.imgMenu}
+          />
+        </Pressable>
+
         <Image
           source={require('../assets/images/logo.png')}
           style={styles.img}

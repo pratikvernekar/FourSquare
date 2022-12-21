@@ -8,14 +8,13 @@ const authenticateSlice = createSlice({
     userToken: null,
     latitude: '',
     longitude: '',
+    skip: false,
   },
 
   reducers: {
     login: (state, action) => {
       state.userToken = action.payload.access_token;
       state.isLoading = false;
-      state.latitude = false;
-      state.longitude = '';
     },
 
     logOut: state => {
@@ -26,8 +25,11 @@ const authenticateSlice = createSlice({
       state.latitude = action.payload.lat;
       state.longitude = action.payload.long;
     },
+    setSkip: (state, action) => {
+      state.skip = action.payload;
+    },
   },
 });
 
-export const {login, logOut, setLatLong} = authenticateSlice.actions;
+export const {login, logOut, setLatLong, setSkip} = authenticateSlice.actions;
 export default authenticateSlice.reducer;

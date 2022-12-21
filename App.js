@@ -13,18 +13,22 @@ import ReviewScreen from './src/screens/ReviewScreen';
 import AddReviewScreen from './src/screens/AddReviewScreen';
 import NearyouScreen from './src/screens/NearyouScreen';
 import NavigationFunctionality from './src/Navigations/NavigationFunctionality';
+import DrawerNav from './src/Navigations/Drawer';
+import FavouriteScreen from './src/screens/FavouriteScreen';
 
 let persistor = persistStore(store);
 
 const App = () => {
   return (
-    <Provider store={store}>
-      <PersistGate persistor={persistor}>
-        <NavigationContainer>
-          <NavigationFunctionality />
-        </NavigationContainer>
-      </PersistGate>
-    </Provider>
+    
+      <Provider store={store}>
+        <PersistGate persistor={persistor}>
+          <NavigationContainer>
+            <NavigationFunctionality />
+          </NavigationContainer>
+        </PersistGate>
+      </Provider>
+    
   );
 };
 

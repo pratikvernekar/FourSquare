@@ -46,7 +46,6 @@ export const verifyOtp = async value => {
   }
 };
 export const forgotPassword = async (password, email) => {
-   
   try {
     const response = await axios.post(`${BASE_URl}/forgotPassword`, {
       email: email,
@@ -55,5 +54,21 @@ export const forgotPassword = async (password, email) => {
     return response.data;
   } catch (error) {
     console.log('An error has occurred in forget password');
+  }
+};
+export const getProfile = async token => {
+  try {
+    const response = await axios.post(
+      `${BASE_URl}/getProfile`,
+      {},
+      {
+        headers: {
+          Authorization: `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6IkFiY0BnbWFpbC5jb20iLCJpYXQiOjE2NzE2Mjg3NDYsImV4cCI6MTY3MTYzMjM0Nn0.lll_4Taa9u9Xt9b-Sr8uKXi8DOdktAlWYqGxuxd9pHI`,
+        },
+      },
+    );
+    return response.data;
+  } catch (error) {
+    console.log('An error has occurred in getProfile ');
   }
 };

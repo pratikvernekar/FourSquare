@@ -9,11 +9,27 @@ import {
   TextInput,
   Pressable,
 } from 'react-native';
-import React, {useState} from 'react';
+import React, {useRef, useState} from 'react';
 import ImagePicker from 'react-native-image-crop-picker';
+import {addReview} from '../services/Places';
+import Toast from 'react-native-simple-toast';
 
-const AddReviewScreen = () => {
+const AddReviewScreen = ({navigation, route}) => {
   const [image, setImage] = useState(false);
+  const [text, setText] = useState('');
+  const ref=useRef()
+
+  const addRev = async () => {
+    try {
+      const response = await addReview(route.params, text);
+      console.log(response);
+      ref.current.clear()
+      Toast.show(response.message);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+  console.log(text);
   const [imageUri, setImageUri] = useState('');
   const selectImg = () => {
     ImagePicker.openPicker({
@@ -22,7 +38,7 @@ const AddReviewScreen = () => {
       cropping: true,
     })
       .then(image => {
-        console.log(image);
+        // console.log(image);
         setImageUri(image.path);
         setImage(true);
       })
@@ -30,15 +46,17 @@ const AddReviewScreen = () => {
         console.log(e);
       });
   };
-
+  console.log(route.params);
   return (
     <SafeAreaView style={{flex: 1, backgroundColor: 'white'}}>
-      <StatusBar backgroundColor="#310D20" />
       <View style={styles.header}>
-        <Image
-          source={require('../assets/images/back_icon.png')}
-          style={styles.imgBack}
-        />
+        <Pressable onPress={() => navigation.goBack()}>
+          <Image
+            source={require('../assets/images/back_icon.png')}
+            style={styles.imgBack}
+          />
+        </Pressable>
+
         <Text style={styles.headerText}>Add Review</Text>
       </View>
       <ScrollView>
@@ -52,6 +70,8 @@ const AddReviewScreen = () => {
               multiline={true}
               numberOfLines={7}
               textAlignVertical="top"
+              onChangeText={text => setText(text)}
+              ref={ref}
             />
           </ScrollView>
         </View>
@@ -74,7 +94,7 @@ const AddReviewScreen = () => {
           <Pressable onPress={selectImg}>
             <View style={styles.addPickView}>
               <Image
-                source={require('../assets/images/addPick1.png')}
+                source={require('../assets/images/Imgs/aad_photo_icon_big.png')}
                 style={styles.imgPick}
               />
             </View>
@@ -82,7 +102,7 @@ const AddReviewScreen = () => {
         </View>
       </ScrollView>
       <View style={styles.btn}>
-        <Pressable>
+        <Pressable onPress={addRev}>
           <Text style={styles.btnText}>Submit</Text>
         </Pressable>
       </View>
@@ -144,11 +164,8 @@ const styles = StyleSheet.create({
   addPickView: {
     height: 60,
     width: 60,
-
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: '#c7c7c7',
-
     borderRadius: 8,
     margin: 10,
   },
@@ -171,8 +188,8 @@ const styles = StyleSheet.create({
 
   imgPick: {
     resizeMode: 'contain',
-    height: 50,
-    width: 50,
+    height: 60,
+    width: 60,
   },
   btn: {
     width: '100%',

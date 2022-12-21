@@ -4,16 +4,22 @@ import {
   createStackNavigator,
   CardStyleInterpolators,
 } from '@react-navigation/stack';
-import TopNavScreen from '../screens/TopNavScreen';
 import IndividualRestaurant from '../screens/IndividualRestaurantScreen';
+import DrawerNav from './Drawer';
+import FavouriteScreen from '../screens/FavouriteScreen';
+import AboutScreen from '../screens/AboutScreen';
+import FeedbackScreen from '../screens/FeedbackScreen';
+import ReviewScreen from '../screens/ReviewScreen'
+import AddReview from '../screens/AddReviewScreen'
+
 const Stack = createStackNavigator();
 
 const LoggedInStack = () => {
   return (
-    <Stack.Navigator initialRouteName="TopNav">
+    <Stack.Navigator initialRouteName="Drawer">
       <Stack.Screen
-        name="TopNav"
-        component={TopNavScreen}
+        name="Drawer"
+        component={DrawerNav}
         options={{
           headerShown: false,
           cardStyleInterpolator: CardStyleInterpolators.forHorizontalIOS,
@@ -28,30 +34,48 @@ const LoggedInStack = () => {
           cardStyleInterpolator: CardStyleInterpolators.forHorizontalIOS,
         }}
       />
-      {/* <Stack.Screen
-        name="ResetPassword"
-        component={ResetPassword}
+
+      <Stack.Screen
+        name="Favourite"
+        component={FavouriteScreen}
         options={{
           headerShown: false,
           cardStyleInterpolator: CardStyleInterpolators.forHorizontalIOS,
         }}
       />
       <Stack.Screen
-        name="TopNav"
-        component={TopNavScreen}
+        name="AboutUs"
+        component={AboutScreen}
         options={{
           headerShown: false,
           cardStyleInterpolator: CardStyleInterpolators.forHorizontalIOS,
         }}
       />
       <Stack.Screen
-        name="IndividualRestaurant"
-        component={IndividualRestaurant}
+        name="FeedBack"
+        component={FeedbackScreen}
         options={{
           headerShown: false,
           cardStyleInterpolator: CardStyleInterpolators.forHorizontalIOS,
         }}
-      /> */}
+      />
+      <Stack.Screen
+        name="Review"
+        component={ReviewScreen}
+        options={{
+          headerShown: false,
+          cardStyleInterpolator: CardStyleInterpolators.forHorizontalIOS,
+        }}
+      />
+      <Stack.Screen
+        name="AddReview"
+        component={AddReview}
+        options={{
+          headerShown: false,
+          cardStyleInterpolator: CardStyleInterpolators.forHorizontalIOS,
+        }}
+      />
+   
     </Stack.Navigator>
   );
 };

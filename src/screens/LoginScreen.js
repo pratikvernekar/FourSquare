@@ -2,6 +2,7 @@ import {
   Image,
   ImageBackground,
   KeyboardAvoidingView,
+  Pressable,
   SafeAreaView,
   ScrollView,
   StatusBar,
@@ -17,8 +18,8 @@ import {Formik, Field} from 'formik';
 import * as yup from 'yup';
 import {checkIn} from '../services/UserAuth';
 import Toast from 'react-native-simple-toast';
-import { useDispatch } from 'react-redux';
-import { login } from '../redux/AuthSlice';
+import {useDispatch} from 'react-redux';
+import {login, setSkip} from '../redux/AuthSlice';
 
 const loginValidationSchema = yup.object().shape({
   email: yup
@@ -42,10 +43,10 @@ const initialValues = {
 };
 
 const LoginScreen = ({navigation}) => {
-  const dispatch=useDispatch()
+  const dispatch = useDispatch();
   const forgotPassword = email => {
     if (email !== '') {
-      navigation.navigate('OtpScreen',{email});
+      navigation.navigate('OtpScreen', {email});
     } else {
       Toast.show('Enter the email');
     }
@@ -65,7 +66,9 @@ const LoginScreen = ({navigation}) => {
             showsHorizontalScrollIndicator={false}>
             <View style={styles.container}>
               <View style={styles.header}>
-                <Text style={styles.skipText}>Skip {'>'}</Text>
+                <Pressable onPress={() => navigation.navigate('SkipStack')}>
+                  <Text style={styles.skipText}>Skip {'>'}</Text>
+                </Pressable>
               </View>
               <View style={styles.imgView}>
                 <Image
@@ -78,11 +81,10 @@ const LoginScreen = ({navigation}) => {
                 initialValues={initialValues}
                 onSubmit={async (values, {resetForm}) => {
                   const response = await checkIn(values);
-                  console.log(response);
                   if (response === undefined) {
                     Toast.show('Login Unsuccessfull');
                   } else {
-                    dispatch(login(response))
+                    dispatch(login(response));
                     Toast.show('Login Successfull');
                     navigation.navigate('TopNav');
                     resetForm({initialValues});
@@ -106,6 +108,7 @@ const LoginScreen = ({navigation}) => {
                         label="Password"
                         keyboardType="default"
                         value={values.password}
+                        secureTextEntry={true}
                       />
                     </View>
                     <TouchableOpacity

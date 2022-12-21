@@ -7,8 +7,8 @@ import {
 import Register from '../screens/RegisterScreen';
 import OtpScreen from '../screens/OtpScreen';
 import ResetPassword from '../screens/ResetPasswordScreen';
-import TopNavScreen from '../screens/TopNavScreen';
 import IndividualRestaurant from '../screens/IndividualRestaurantScreen';
+import LoggedInStack from './LoggedInStack';
 
 const Stack = createStackNavigator();
 
@@ -35,12 +35,13 @@ function AuthStack() {
         headerShown: false,
         cardStyleInterpolator: CardStyleInterpolators.forHorizontalIOS,
       }}/>
-      <Stack.Screen name="TopNav" component={TopNavScreen} 
+    
+      <Stack.Screen name="IndividualRestaurant" component={IndividualRestaurant} 
       options={{
         headerShown: false,
         cardStyleInterpolator: CardStyleInterpolators.forHorizontalIOS,
       }}/>
-      <Stack.Screen name="IndividualRestaurant" component={IndividualRestaurant} 
+      <Stack.Screen name="SkipStack" component={LoggedInStack} 
       options={{
         headerShown: false,
         cardStyleInterpolator: CardStyleInterpolators.forHorizontalIOS,
