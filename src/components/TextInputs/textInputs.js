@@ -1,5 +1,5 @@
 import React from 'react';
-import {StyleSheet, Text, View} from 'react-native';
+import {StyleSheet, Text, View, Image, TextInput} from 'react-native';
 import {TextField} from 'rn-material-ui-textfield';
 
 export const Input1 = props => {
@@ -8,7 +8,6 @@ export const Input1 = props => {
     form: {errors, touched, setFieldTouched},
     ...inputProps
   } = props;
-//c//onsole.log('---',props.inputProps);
   const hasError = errors[name] && touched[name];
   return (
     <View style={{width: '100%'}}>
@@ -37,7 +36,7 @@ export const Input1 = props => {
             setFieldTouched(name);
             onBlur(name);
           }}
-           {...inputProps}
+          {...inputProps}
         />
       </View>
       {hasError && <Text style={styles.errorText}>{errors[name]}</Text>}
@@ -76,16 +75,54 @@ export const Input2 = props => {
   );
 };
 
+export const SearchInput = props => {
+  return (
+    <View style={styles.searchView}>
+      <Image source={props.source} style={styles.imgSearch} />
+      <TextInput
+        value={props.value}
+        onChange={props.onChange}
+        placeholder={props.placeholder}
+        placeholderTextColor={props.placeholderTextColor}
+        style={{
+          color: '#CACACA',
+          width: '85%',
+          height: 40,
+          fontFamily: 'AvenirLTStd-Book',
+          fontSize: 17,
+          marginTop: 6,
+        }}
+        onFocus={props.onFocus}
+        onChangeText={props.onChangeText}
+      />
+    </View>
+  );
+};
 const styles = StyleSheet.create({
   errorText: {
     color: 'red',
     alignSelf: 'center',
     fontSize: 12,
     fontFamily: 'AvenirLTStd-Book',
-    
 
     position: 'absolute',
     bottom: -21,
-    textAlign:'center'
+    textAlign: 'center',
+  },
+  searchView: {
+    borderWidth: 1,
+    width: '100%',
+    flexDirection: 'row',
+    borderRadius: 4,
+    alignItems: 'center',
+    marginBottom: 8,
+    backgroundColor: 'white',
+    height: 44,
+  },
+  imgSearch: {
+    resizeMode: 'contain',
+    width: 20,
+    height: Platform.OS === 'ios' ? 50 : 30,
+    marginHorizontal: 10,
   },
 });

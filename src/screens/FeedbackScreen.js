@@ -6,10 +6,24 @@ import {
   Pressable,
   Image,
 } from 'react-native';
-import React from 'react';
+import React, {useRef, useState} from 'react';
 import {ScrollView, TextInput} from 'react-native-gesture-handler';
+import {useSelector} from 'react-redux';
+import {getVerifiedKeys} from '../Function';
+import {addFeedBack} from '../services/UserAuth';
+import Toast from 'react-native-simple-toast';
 
 const FeedbackScreen = ({navigation}) => {
+  const authData = useSelector(state => state.auth);
+  const [text, setText] = useState('');
+  const ref = useRef();
+  const addFeed = async () => {
+    const key = await getVerifiedKeys(authData.userToken);
+    const response = await addFeedBack(text, key);
+    console.log(response);
+    ref.current.clear();
+    Toast.show('Feedback Added');
+  };
   return (
     <SafeAreaView style={styles.main}>
       <View style={styles.header}>
@@ -31,30 +45,32 @@ const FeedbackScreen = ({navigation}) => {
       </View>
       {/* <View style={styles.textContainer}> */}
       <ScrollView>
-      <Text
-        style={{
-          fontSize: 18,
-          color: '#000000',
-          fontFamily: 'AvenirLTStd-Book',
+        <Text
+          style={{
+            fontSize: 18,
+            color: '#000000',
+            fontFamily: 'AvenirLTStd-Book',
 
-          width: '90%',
-          alignSelf: 'center',
-          marginTop: 20,
-        }}>
-        Write your feedback
-      </Text>
+            width: '90%',
+            alignSelf: 'center',
+            marginTop: 20,
+          }}>
+          Write your feedback
+        </Text>
         <TextInput
           style={styles.textContainer}
           placeholder="Feedback"
-          placeholderTextColor={'black'}
+          placeholderTextColor={'grey'}
           multiline={true}
           numberOfLines={10}
           textAlignVertical="top"
+          onChangeText={text => setText(text)}
+          ref={ref}
         />
       </ScrollView>
       {/* </View> */}
       <View style={styles.btn}>
-        <Pressable>
+        <Pressable onPress={addFeed}>
           <Text style={styles.btnText}>Submit</Text>
         </Pressable>
       </View>
@@ -97,6 +113,7 @@ const styles = StyleSheet.create({
     alignSelf: 'center',
     marginVertical: 10,
     color: '#7c7c7c',
+    padding: 10,
   },
   text: {
     fontSize: 16,

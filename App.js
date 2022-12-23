@@ -15,6 +15,7 @@ import NearyouScreen from './src/screens/NearyouScreen';
 import NavigationFunctionality from './src/Navigations/NavigationFunctionality';
 import DrawerNav from './src/Navigations/Drawer';
 import FavouriteScreen from './src/screens/FavouriteScreen';
+import SearchScreen from './src/screens/SearchScreen';
 
 let persistor = persistStore(store);
 

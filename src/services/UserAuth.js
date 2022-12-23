@@ -2,6 +2,17 @@ import axios from 'axios';
 import Toast from 'react-native-simple-toast';
 const BASE_URl = 'https://four-square-three.vercel.app/api';
 
+export const refreshToken = async token => {
+  let res = await fetch(`${BASE_URl}/getAccessToken`, {
+    method: 'post',
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+  let data = await res.json();
+  return data;
+};
+
 export const register = async values => {
   try {
     const response = await axios.post(`${BASE_URl}/register`, {
@@ -63,12 +74,55 @@ export const getProfile = async token => {
       {},
       {
         headers: {
-          Authorization: `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6IkFiY0BnbWFpbC5jb20iLCJpYXQiOjE2NzE2Mjg3NDYsImV4cCI6MTY3MTYzMjM0Nn0.lll_4Taa9u9Xt9b-Sr8uKXi8DOdktAlWYqGxuxd9pHI`,
+          Authorization: `Bearer ${token}`,
         },
       },
     );
     return response.data;
   } catch (error) {
     console.log('An error has occurred in getProfile ');
+  }
+};
+export const addProfileImage = async (image, token) => {
+  console.log(image);
+  try {
+    let res = await fetch(`${BASE_URl}/addProfileImage`, {
+      method: 'post',
+      body: image,
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    let data = await res.json();
+    return data;
+  } catch (er) {
+    Toast.show('Error');
+  }
+};
+
+export const addFeedBack = async (feed, token) => {
+  try {
+    const response = await axios.post(
+      `${BASE_URl}/addFeedback`,
+      {
+        feedback: feed,
+      },
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      },
+    );
+    return response.data;
+  } catch (error) {
+    console.log('An error has occurred in addFeedback');
+  }
+};
+export const getAboutUs = async () => {
+  try {
+    const response = await axios.get(`${BASE_URl}/getAboutUs`, {}, {});
+    return response.data;
+  } catch (error) {
+    console.log('An error has occurred in getAboutUs');
   }
 };

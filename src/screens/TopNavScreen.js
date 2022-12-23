@@ -6,6 +6,7 @@ import {
   Image,
   StatusBar,
   Pressable,
+  TouchableOpacity,
 } from 'react-native';
 import React from 'react';
 import TopNavigation from '../Navigations/TopNavigation';
@@ -15,7 +16,7 @@ const TopNavScreen = ({navigation}) => {
     <SafeAreaView style={styles.main}>
       <StatusBar backgroundColor="#310D20" />
       <View style={styles.header}>
-        <Pressable onPress={()=>navigation.openDrawer()}>
+        <Pressable onPress={() => navigation.openDrawer()}>
           <Image
             source={require('../assets/images/menu_icon.png')}
             style={styles.imgMenu}
@@ -31,10 +32,12 @@ const TopNavScreen = ({navigation}) => {
             source={require('../assets/images/filter_icon.png')}
             style={styles.imgSearch}
           />
-          <Image
-            source={require('../assets/images/search_icon.png')}
-            style={styles.imgSearch}
-          />
+          <TouchableOpacity onPress={()=>navigation.navigate('Search')}>
+            <Image
+              source={require('../assets/images/search_icon.png')}
+              style={styles.imgSearch}
+            />
+          </TouchableOpacity>
         </View>
       </View>
       <TopNavigation />

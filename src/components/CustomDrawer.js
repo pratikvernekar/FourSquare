@@ -6,28 +6,60 @@ import {
   ImageBackground,
   Image,
   Pressable,
+  TouchableOpacity,
 } from 'react-native';
 import React, {useEffect, useState} from 'react';
+import Toast from 'react-native-simple-toast';
+
 import {
   DrawerContentScrollView,
   DrawerItemList,
 } from '@react-navigation/drawer';
 import {ScrollView} from 'react-native-gesture-handler';
 import {useDispatch, useSelector} from 'react-redux';
-import {login, logOut, setSkip} from '../redux/AuthSlice';
-import {getProfile} from '../services/UserAuth';
+import {logOut} from '../redux/AuthSlice';
+import {addProfileImage, getProfile} from '../services/UserAuth';
+import {getVerifiedKeys} from '../Function';
+import ImagePicker from 'react-native-image-crop-picker';
 
-const CustomDrawer = (props, {navigation}) => {
+const CustomDrawer = props => {
   const authData = useSelector(state => state.auth);
-  const [userData,setUserData]=useState({})
+  const [userData, setUserData] = useState({});
+  const [img, setImg] = useState(false);
   const dispatch = useDispatch();
   useEffect(() => {
     setTimeout(async () => {
-      const response = await getProfile();
-      console.log(response);
-      setUserData(response)
+      const key = await getVerifiedKeys(authData.userToken);
+      const response = await getProfile(key);
+      setUserData(response);
     }, 500);
-  }, []);
+  }, [img]);
+
+  const selectImg = async () => {
+    ImagePicker.openPicker({
+      width: 200,
+      height: 200,
+      cropping: true,
+    })
+      .then(async image => {
+        const payload = new FormData();
+        payload.append('image', {
+          uri: image.path,
+          type: image.mime,
+          name: `${image.filename}.${image.mime.substring(
+            image.mime.indexOf('/') + 1,
+          )}`,
+        });
+        let cred = await getVerifiedKeys(authData.userToken);
+        await addProfileImage(payload, cred);
+        setImg(!img);
+        // if (resp.hasOwnProperty('message')) {
+        //   //(setImage('https' + resp.url.substring(4)));
+        //   //navigation.navigate('ImageSuccess');
+        // }
+      })
+      .catch(er => Toast.show('User cancelled selection'));
+  };
 
   return (
     <View style={styles.main}>
@@ -39,12 +71,22 @@ const CustomDrawer = (props, {navigation}) => {
           source={require('../assets/images/background.png')}>
           <ScrollView>
             <View style={styles.container}>
-              <Image
-                source={{uri:userData.userImage}}
-                style={styles.UserImg}
-              />
               {authData.userToken !== null ? (
-                <Text style={styles.userText}>{userData.userName}</Text>
+                <TouchableOpacity onPress={selectImg}>
+                  <Image
+                    source={{uri: userData?.userImage}}
+                    style={styles.UserImg}
+                  />
+                </TouchableOpacity>
+              ) : (
+                <Image
+                  source={require('..//assets/images/sidemenu/profile_icon.png')}
+                  style={styles.UserImg}
+                />
+              )}
+
+              {authData.userToken !== null ? (
+                <Text style={styles.userText}>{userData?.userName}</Text>
               ) : (
                 <Pressable
                   onPress={() => props.navigation.navigate('LoginScreen')}>
@@ -155,9 +197,9 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   UserImg: {
-    height: 90,
-    width: 90,
-    borderRadius: 50,
+    height: 110,
+    width: 110,
+    borderRadius: 60,
     resizeMode: 'contain',
     marginTop: 60,
   },

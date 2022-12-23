@@ -19,7 +19,8 @@ import * as yup from 'yup';
 import {checkIn} from '../services/UserAuth';
 import Toast from 'react-native-simple-toast';
 import {useDispatch} from 'react-redux';
-import {login, setSkip} from '../redux/AuthSlice';
+import {login} from '../redux/AuthSlice';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const loginValidationSchema = yup.object().shape({
   email: yup
@@ -59,96 +60,94 @@ const LoginScreen = ({navigation}) => {
         resizeMode="cover"
         style={{flex: 1}}
         source={require('../assets/images/background.png')}>
-        <KeyboardAvoidingView style={{flex: 1}}>
-          <ScrollView
-            style={{flex: 1}}
-            showsVerticalScrollIndicator={false}
-            showsHorizontalScrollIndicator={false}>
-            <View style={styles.container}>
-              <View style={styles.header}>
-                <Pressable onPress={() => navigation.navigate('SkipStack')}>
-                  <Text style={styles.skipText}>Skip {'>'}</Text>
-                </Pressable>
-              </View>
-              <View style={styles.imgView}>
-                <Image
-                  source={require('../assets/images/logo.png')}
-                  style={styles.img}
-                />
-              </View>
-              <Formik
-                validationSchema={loginValidationSchema}
-                initialValues={initialValues}
-                onSubmit={async (values, {resetForm}) => {
-                  const response = await checkIn(values);
-                  if (response === undefined) {
-                    Toast.show('Login Unsuccessfull');
-                  } else {
-                    dispatch(login(response));
-                    Toast.show('Login Successfull');
-                    navigation.navigate('TopNav');
-                    resetForm({initialValues});
-                  }
-                }}>
-                {({values, handleSubmit, isValid, errors}) => (
-                  <>
-                    <View style={styles.inputView}>
-                      <Field
-                        component={Input1}
-                        name="email"
-                        value={values.email}
-                        label="Email"
-                        keyboardType="email-address"
-                      />
-                    </View>
-                    <View style={styles.inputView}>
-                      <Field
-                        component={Input1}
-                        name="password"
-                        label="Password"
-                        keyboardType="default"
-                        value={values.password}
-                        secureTextEntry={true}
-                      />
-                    </View>
-                    <TouchableOpacity
-                      onPress={() => forgotPassword(values.email)}>
-                      <View style={styles.forgetpassView}>
-                        <Text style={styles.forhetText}>Forgot Password?</Text>
-                      </View>
-                    </TouchableOpacity>
-                    <View style={styles.btn}>
-                      <Buttons title="Login" onPress={handleSubmit} />
-                    </View>
-                  </>
-                )}
-              </Formik>
-              <TouchableOpacity onPress={() => navigation.navigate('Register')}>
-                <View style={styles.creatAccView}>
-                  <Text style={styles.createText}>Create Account</Text>
-                </View>
-              </TouchableOpacity>
-
-              <View style={styles.orView}>
-                <Text style={styles.orText}>OR</Text>
-              </View>
-              <View style={styles.social}>
-                <TouchableOpacity>
-                  <Image
-                    source={require('../assets/images/facebook_btn.png')}
-                    style={styles.bottomImg}
-                  />
-                </TouchableOpacity>
-                <TouchableOpacity>
-                  <Image
-                    source={require('../assets/images/g+_btn.png')}
-                    style={styles.bottomImg}
-                  />
-                </TouchableOpacity>
-              </View>
+        <ScrollView
+          style={{flex: 1}}
+          showsVerticalScrollIndicator={false}
+          showsHorizontalScrollIndicator={false}>
+          <View style={styles.container}>
+            <View style={styles.header}>
+              <Pressable onPress={() => navigation.navigate('SkipStack')}>
+                <Text style={styles.skipText}>Skip {'>'}</Text>
+              </Pressable>
             </View>
-          </ScrollView>
-        </KeyboardAvoidingView>
+            <View style={styles.imgView}>
+              <Image
+                source={require('../assets/images/logo.png')}
+                style={styles.img}
+              />
+            </View>
+            <Formik
+              validationSchema={loginValidationSchema}
+              initialValues={initialValues}
+              onSubmit={async (values, {resetForm}) => {
+                const response = await checkIn(values);
+                if (response === undefined) {
+                  Toast.show('Login Unsuccessfull');
+                } else {
+                  dispatch(login(response));
+                  await AsyncStorage.setItem('token', response.access_token);
+                  Toast.show('Login Successfull');
+                  resetForm({initialValues});
+                }
+              }}>
+              {({values, handleSubmit, isValid, errors}) => (
+                <>
+                  <View style={styles.inputView}>
+                    <Field
+                      component={Input1}
+                      name="email"
+                      value={values.email}
+                      label="Email"
+                      keyboardType="email-address"
+                    />
+                  </View>
+                  <View style={styles.inputView}>
+                    <Field
+                      component={Input1}
+                      name="password"
+                      label="Password"
+                      keyboardType="default"
+                      value={values.password}
+                      secureTextEntry={true}
+                    />
+                  </View>
+                  <TouchableOpacity
+                    onPress={() => forgotPassword(values.email)}>
+                    <View style={styles.forgetpassView}>
+                      <Text style={styles.forhetText}>Forgot Password?</Text>
+                    </View>
+                  </TouchableOpacity>
+                  <View style={styles.btn}>
+                    <Buttons title="Login" onPress={handleSubmit} />
+                  </View>
+                </>
+              )}
+            </Formik>
+            <TouchableOpacity onPress={() => navigation.navigate('Register')}>
+              <View style={styles.creatAccView}>
+                <Text style={styles.createText}>Create Account</Text>
+              </View>
+            </TouchableOpacity>
+
+            <View style={styles.orView}>
+              <Text style={styles.orText}>OR</Text>
+            </View>
+            <View style={styles.social}>
+              <TouchableOpacity>
+                <Image
+                  source={require('../assets/images/facebook_btn.png')}
+                  style={styles.bottomImg}
+                />
+              </TouchableOpacity>
+              <TouchableOpacity>
+                <Image
+                  source={require('../assets/images/g+_btn.png')}
+                  style={styles.bottomImg}
+                />
+              </TouchableOpacity>
+            </View>
+          </View>
+        </ScrollView>
       </ImageBackground>
     </SafeAreaView>
   );

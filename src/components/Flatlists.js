@@ -7,10 +7,12 @@ import {
   useWindowDimensions,
   TouchableOpacity,
   Platform,
+  ScrollView,
 } from 'react-native';
 import React from 'react';
 
-const Flatlists1 = ({navigation, data}) => {
+const Flatlists1 = ({navigation, data,horizontal},props) => {
+
   const {height, width} = useWindowDimensions();
   const width1 =
     width > height
@@ -80,15 +82,15 @@ const Flatlists1 = ({navigation, data}) => {
       keyExtractor={item => item._id}
       showsHorizontalScrollIndicator={false}
       showsVerticalScrollIndicator={false}
+      horizontal={horizontal}
     />
   );
 };
 
 const ReviewList = ({data}) => {
-  console.log(data);
   const renderItem = ({item}) => (
     <TouchableOpacity onPress={() => console.log('d')}>
-      <View style={styles.mainReview} >
+      <View style={styles.mainReview}>
         <Image
           style={{
             height: 40,
@@ -106,7 +108,7 @@ const ReviewList = ({data}) => {
             width: '86%',
             height: 80,
             alignSelf: 'center',
-           
+
             paddingHorizontal: 10,
           }}>
           <View style={styles.textContainer}>
@@ -115,7 +117,6 @@ const ReviewList = ({data}) => {
           </View>
 
           <Text style={styles.text3}>{item.review}</Text>
-          {/* <Text style={styles.text3}>{item.reviewBy}</Text> */}
         </View>
       </View>
     </TouchableOpacity>
@@ -131,7 +132,40 @@ const ReviewList = ({data}) => {
   );
 };
 
-export {Flatlists1, ReviewList};
+const NearByPlaces = ({data}) => {
+  return (
+    <View>
+      {data.length > 0
+        ? data.map(item => {
+            return (
+              <ScrollView key={item._id}>
+                <TouchableOpacity onPress={() => console.log('d')}>
+                  <View style={styles.mainReview}>
+                    <Image
+                      style={{
+                        height: 60,
+                        width: 60,
+
+                        marginTop: 15,
+                        marginLeft: 18,
+                      }}
+                      source={{uri: 'https' + item.image.substring(4)}}
+                    />
+
+                    <View style={styles.textContainer}>
+                      <Text style={styles.text4}>{item.city}</Text>
+                    </View>
+                  </View>
+                </TouchableOpacity>
+              </ScrollView>
+            );
+          })
+        : null}
+    </View>
+  );
+};
+
+export {Flatlists1, ReviewList, NearByPlaces};
 
 const styles = StyleSheet.create({
   main: {
@@ -180,6 +214,16 @@ const styles = StyleSheet.create({
     paddingLeft: 10,
     width: '100%',
   },
+  text4: {
+    color: '#000000',
+    fontSize: 20,
+    fontFamily: 'AvenirLTStd-Book',
+    paddingLeft: 10,
+    width: '100%',
+    marginTop: 25,
+
+    height: 30,
+  },
   mainReview: {
     backgroundColor: 'white',
     height: 90,
@@ -187,6 +231,6 @@ const styles = StyleSheet.create({
     width: '100%',
     alignSelf: 'center',
     borderBottomWidth: 1,
-    borderColor: '#B8B8B8',
+    borderColor: '#d4d4d4',
   },
 });

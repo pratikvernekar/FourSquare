@@ -184,7 +184,7 @@ const IndividualRestaurant = ({navigation, route}) => {
                   longitude: particularPlace.location?.coordinates[0],
                   latitudeDelta: 0.04,
                   longitudeDelta: 0.05,
-                }}>
+                }}>{}
                 <Marker
                   draggable
                   coordinate={{

@@ -11,6 +11,7 @@ import AboutScreen from '../screens/AboutScreen';
 import FeedbackScreen from '../screens/FeedbackScreen';
 import ReviewScreen from '../screens/ReviewScreen'
 import AddReview from '../screens/AddReviewScreen'
+import SearchScreen from '../screens/SearchScreen';
 
 const Stack = createStackNavigator();
 
@@ -70,6 +71,14 @@ const LoggedInStack = () => {
       <Stack.Screen
         name="AddReview"
         component={AddReview}
+        options={{
+          headerShown: false,
+          cardStyleInterpolator: CardStyleInterpolators.forHorizontalIOS,
+        }}
+      />
+      <Stack.Screen
+        name="Search"
+        component={SearchScreen}
         options={{
           headerShown: false,
           cardStyleInterpolator: CardStyleInterpolators.forHorizontalIOS,

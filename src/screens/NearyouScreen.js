@@ -170,7 +170,6 @@ const styles = StyleSheet.create({
   },
   mapView: {
     backgroundColor: 'white',
-
     shadowColor: 'grey',
     shadowOffset: {
       width: 0,
@@ -179,8 +178,6 @@ const styles = StyleSheet.create({
     shadowRadius: 10,
     shadowOpacity: 0.9,
     elevation: 10,
-
-    // backgroundColor: 'blue',
   },
 });
 

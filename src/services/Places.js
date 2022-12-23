@@ -87,12 +87,35 @@ export const addReview = async (id, review, token) => {
       },
       {
         headers: {
-          Authorization: `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6IkFiY0BnbWFpbC5jb20iLCJpYXQiOjE2NzE2Mjc3ODAsImV4cCI6MTY3MTYzMTM4MH0.AHjroDV01cliddxYfkYhy7tjTAgaQQ2y53DjsG0pkKk`,
+          Authorization: `Bearer ${token}`,
         },
       },
     );
     return response.data;
   } catch (error) {
     console.log('An error has occurred in addReview');
+  }
+};
+export const getNearCity = async (lat, long) => {
+  try {
+    const response = await axios.post(`${BASE_URl}/getNearCity`, {
+      latitude: lat,
+      longitude: long,
+    });
+    return response.data;
+  } catch (error) {
+    console.log('An error has occurred in getNearCity');
+  }
+};
+export const searchPlaceWithOutFilter = async (lat, long, place) => {
+  try {
+    const response = await axios.post(`${BASE_URl}/searchPlace`, {
+      latitude: lat,
+      longitude: long,
+      text: place,
+    });
+    return response.data;
+  } catch (error) {
+    console.log('An error has occurred in searchPlaceWithOutFilter');
   }
 };
