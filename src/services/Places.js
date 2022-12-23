@@ -119,3 +119,44 @@ export const searchPlaceWithOutFilter = async (lat, long, place) => {
     console.log('An error has occurred in searchPlaceWithOutFilter');
   }
 };
+export const addFavourite = async (id,token) => {
+
+  try {
+    const response = await axios.post(
+      `${BASE_URl}/addFavourite`,
+      {
+        _id:id,
+      },
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      },
+    );
+    return response.data;
+  } catch (error) {
+    console.log('An error has occurred in addFavourite');
+  }
+};
+
+
+export const searchFavourite = async (text, lat, long, token) => {
+  try {
+    const response = await axios.post(
+      `${BASE_URl}/searchFavourite`,
+      {
+        text: text,
+        latitude: lat,
+        longitude: long,
+      },
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      },
+    );
+    return response.data;
+  } catch (error) {
+    console.log('An error has occurred in searchFavourite');
+  }
+};

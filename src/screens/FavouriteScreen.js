@@ -7,10 +7,48 @@ import {
   Image,
   TextInput,
   Platform,
+  ActivityIndicator,
+  useWindowDimensions,
 } from 'react-native';
-import React from 'react';
+import React, {useEffect, useState} from 'react';
+import {searchFavourite} from '../services/Places';
+import {useSelector} from 'react-redux';
+import {getVerifiedKeys} from '../Function';
+import {FavouriteList} from '../components/Flatlists';
 
 const FavouriteScreen = ({navigation}) => {
+  const {height, width} = useWindowDimensions();
+  const h1 =
+    width > height
+      ? Platform.OS === 'ios'
+        ? '80%'
+        : '78%'
+      : Platform.OS === 'ios'
+      ? '100%'
+      : '100%';
+  const [loading, setLoading] = useState(false);
+  const [del, setDel] = useState(false);
+  const [text, setText] = useState('');
+  const [favData, setFavData] = useState([]);
+  const userData = useSelector(state => state.auth);
+
+  useEffect(() => {
+    setTimeout(async () => {
+      setLoading(true);
+      const key = await getVerifiedKeys(userData.userToken);
+      const response = await searchFavourite(
+        text,
+        userData.latitude,
+        userData.longitude,
+        key,
+      );
+      setFavData(response);
+      setLoading(false);
+    }, 500);
+  }, [text, del]);
+  useEffect(() => {}, [del]);
+  console.log(del);
+
   return (
     <SafeAreaView styles={styles.main}>
       <View style={styles.header}>
@@ -42,16 +80,35 @@ const FavouriteScreen = ({navigation}) => {
           <TextInput
             placeholder="Search"
             placeholderTextColor={'black'}
-            style={{color: 'black'}}
+            style={{
+              color: 'black',
+              width: '85%',
+              height: 40,
+              fontSize: 16,
+
+              fontFamily: 'AvenirLTStd-Book',
+            }}
+            onChangeText={text => setText(text)}
           />
         </View>
       </View>
-      <View
-        style={{
-          height: '100%',
-          borderWidth: 1,
-          backgroundColor: 'white',
-        }}></View>
+      {loading ? (
+        <View style={{backgroundColor: 'white'}}>
+          <ActivityIndicator
+            size={'large'}
+            color="#370f24"
+            style={{marginTop: 100}}
+          />
+        </View>
+      ) : null}
+      <View style={{height: h1, backgroundColor: 'white',}}>
+        {favData.length > 0 ? (
+          <FavouriteList data={favData} del={del} setDel={setDel} />
+        ) : null}
+      </View>
+      <View style={{borderWidth:5,height:200}}>
+        <Text>jadjadh</Text>
+      </View>
     </SafeAreaView>
   );
 };

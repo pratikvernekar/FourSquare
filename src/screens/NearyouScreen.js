@@ -25,6 +25,8 @@ const NearyouScreen = ({navigation}) => {
   const dispatch = useDispatch();
   const [nearPlaces, setNearPlaces] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [loadingList, setLoadingList] = useState(false);
+  const [loadingFav, setLoadingfav] = useState(false);
   const [currentLongitude, setCurrentLongitude] = useState('');
   const [currentLatitude, setCurrentLatitude] = useState('');
   const {height, width} = useWindowDimensions();
@@ -65,6 +67,7 @@ const NearyouScreen = ({navigation}) => {
 
   const getOneTimeLocation = () => {
     setLoading(true);
+    setLoadingList(true);
     Geolocation.getCurrentPosition(
       position => {
         setTimeout(async () => {
@@ -78,17 +81,20 @@ const NearyouScreen = ({navigation}) => {
               },
               3 * 1000,
             );
+
             setLoading(false);
             const response = await getNearPlaces(
               position.coords.latitude,
               position.coords.longitude,
             );
             setNearPlaces(response);
+            setLoadingList(false);
           } catch (error) {
             setLoading(false);
+            setLoadingList(false);
             Toast.show('Failed to animate direction');
           }
-        }, 500);
+        }, 1000);
         Toast.show('You are Here');
         const currentLongitude = position.coords.longitude;
         const currentLatitude = position.coords.latitude;
@@ -136,9 +142,25 @@ const NearyouScreen = ({navigation}) => {
           ) : null}
         </View>
       </View>
+      {loadingList ? (
+        <View
+          style={{
+            marginTop: 50,
+            height: 100,
+
+            justifyContent: 'center',
+          }}>
+          <ActivityIndicator size="large" color="#351247" />
+        </View>
+      ) : null}
       {nearPlaces.length > 0 ? (
         <View style={{flex: 1}}>
-          <Flatlists1 navigation={navigation} data={nearPlaces} />
+          <Flatlists1
+            navigation={navigation}
+            data={nearPlaces}
+            loadingFav={loadingFav}
+            setLoadingfav={setLoadingfav}
+          />
         </View>
       ) : null}
     </SafeAreaView>

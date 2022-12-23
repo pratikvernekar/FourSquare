@@ -20,12 +20,17 @@ import {AirbnbRating} from 'react-native-ratings';
 import LinearGradient from 'react-native-linear-gradient';
 import Geolocation from '@react-native-community/geolocation';
 import Toast from 'react-native-simple-toast';
-import {getParticularPlace} from '../services/Places';
+import {addFavourite, getParticularPlace} from '../services/Places';
+import {useSelector} from 'react-redux';
+import {getVerifiedKeys} from '../Function';
 
 const IndividualRestaurant = ({navigation, route}) => {
+  const userData = useSelector(state => state.auth);
   const [particularPlace, setParticularPlace] = useState({});
   const [modal, setModal] = useState(false);
+  const [fav, setFav] = useState(false);
   const [loadingScreen, setLoadingScreen] = useState(false);
+
   const mapRef = useRef(null);
   const [currentLongitude, setCurrentLongitude] = useState('');
   const [currentLatitude, setCurrentLatitude] = useState('');
@@ -69,6 +74,16 @@ const IndividualRestaurant = ({navigation, route}) => {
     // console.log('jj');
     setModal(true);
   };
+  const favourite = async () => {
+    try {
+      const key = await getVerifiedKeys(userData.userToken);
+      const response = await addFavourite(route.params.id, key);
+      Toast.show(response.message);
+    } catch (error) {
+      console.log('eee');
+    }
+    setFav(!fav);
+  };
   if (loadingScreen) {
     return (
       <SafeAreaView
@@ -77,7 +92,7 @@ const IndividualRestaurant = ({navigation, route}) => {
       </SafeAreaView>
     );
   }
-
+console.log('id',route.params.id);
   return (
     <SafeAreaView style={styles.main}>
       <ScrollView
@@ -101,10 +116,21 @@ const IndividualRestaurant = ({navigation, route}) => {
                 style={{height: 22, width: 22}}
                 source={require('../assets/images/share_icon.png')}
               />
-              <Image
-                style={{height: 22, width: 22, resizeMode: 'contain'}}
-                source={require('../assets/images/favourite_icon.png')}
-              />
+              {fav ? (
+                <TouchableOpacity onPress={favourite}>
+                  <Image
+                    style={{height: 22, width: 22, resizeMode: 'contain'}}
+                    source={require('../assets/images/favourite_icon.png')}
+                  />
+                </TouchableOpacity>
+              ) : (
+                <TouchableOpacity onPress={favourite}>
+                  <Image
+                    style={{height: 22, width: 22, resizeMode: 'contain'}}
+                    source={require('../assets/images/favourite_icon_selected.png')}
+                  />
+                </TouchableOpacity>
+              )}
             </View>
           </View>
           <View
@@ -184,7 +210,8 @@ const IndividualRestaurant = ({navigation, route}) => {
                   longitude: particularPlace.location?.coordinates[0],
                   latitudeDelta: 0.04,
                   longitudeDelta: 0.05,
-                }}>{}
+                }}>
+                {}
                 <Marker
                   draggable
                   coordinate={{

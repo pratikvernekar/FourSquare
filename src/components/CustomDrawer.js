@@ -71,10 +71,10 @@ const CustomDrawer = props => {
           source={require('../assets/images/background.png')}>
           <ScrollView>
             <View style={styles.container}>
-              {authData.userToken !== null ? (
+              {authData.userToken !== null && JSON.stringify(userData)!=='{}' ? (
                 <TouchableOpacity onPress={selectImg}>
                   <Image
-                    source={{uri: userData?.userImage}}
+                    source={{uri: 'https' + userData?.userImage.substring(4)}}
                     style={styles.UserImg}
                   />
                 </TouchableOpacity>
