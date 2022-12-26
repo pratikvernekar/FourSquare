@@ -7,6 +7,7 @@ import {
   Image,
   Pressable,
   TouchableOpacity,
+  ActivityIndicator,
 } from 'react-native';
 import React, {useEffect, useState} from 'react';
 import Toast from 'react-native-simple-toast';
@@ -27,11 +28,14 @@ const CustomDrawer = props => {
   const [userData, setUserData] = useState({});
   const [img, setImg] = useState(false);
   const dispatch = useDispatch();
+  const [loading, setLoading] = useState(false);
   useEffect(() => {
     setTimeout(async () => {
+      setLoading(true);
       const key = await getVerifiedKeys(authData.userToken);
       const response = await getProfile(key);
       setUserData(response);
+      setLoading(false);
     }, 500);
   }, [img]);
 
@@ -53,10 +57,6 @@ const CustomDrawer = props => {
         let cred = await getVerifiedKeys(authData.userToken);
         await addProfileImage(payload, cred);
         setImg(!img);
-        // if (resp.hasOwnProperty('message')) {
-        //   //(setImage('https' + resp.url.substring(4)));
-        //   //navigation.navigate('ImageSuccess');
-        // }
       })
       .catch(er => Toast.show('User cancelled selection'));
   };
@@ -71,13 +71,20 @@ const CustomDrawer = props => {
           source={require('../assets/images/background.png')}>
           <ScrollView>
             <View style={styles.container}>
-              {authData.userToken !== null && JSON.stringify(userData)!=='{}' ? (
-                <TouchableOpacity onPress={selectImg}>
-                  <Image
-                    source={{uri: 'https' + userData?.userImage.substring(4)}}
-                    style={styles.UserImg}
-                  />
-                </TouchableOpacity>
+              {authData.userToken !== null &&
+              JSON.stringify(userData) !== '{}' ? (
+                loading ? (
+                  <View style={{marginTop: 130}}>
+                    <ActivityIndicator color={'white'} size={40} />
+                  </View>
+                ) : (
+                  <TouchableOpacity onPress={selectImg}>
+                    <Image
+                      source={{uri: 'https' + userData?.userImage.substring(4)}}
+                      style={styles.UserImg}
+                    />
+                  </TouchableOpacity>
+                )
               ) : (
                 <Image
                   source={require('..//assets/images/sidemenu/profile_icon.png')}
