@@ -13,7 +13,7 @@ import {
 } from 'react-native';
 import React from 'react';
 import {Input1} from '../components/TextInputs/textInputs';
-import Buttons from '../components/Buttons/Buttons';
+import {Buttons} from '../components/Buttons/Buttons';
 import {Formik, Field} from 'formik';
 import * as yup from 'yup';
 import {checkIn} from '../services/UserAuth';

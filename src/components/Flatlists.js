@@ -10,12 +10,17 @@ import {
   ScrollView,
   Pressable,
 } from 'react-native';
-import React, { useEffect } from 'react';
+import React, {useEffect} from 'react';
 import {addFavourite} from '../services/Places';
-import {useSelector} from 'react-redux';
+import {useDispatch, useSelector} from 'react-redux';
 import {getVerifiedKeys} from '../Function';
+import moment from 'moment';
+import Toast from 'react-native-simple-toast';
+import {setSkip} from '../redux/AuthSlice';
 
 const Flatlists1 = ({navigation, data, horizontal}) => {
+  const userData = useSelector(state => state.auth);
+  const dispatch = useDispatch();
   const {height, width} = useWindowDimensions();
   const width1 =
     width > height
@@ -25,6 +30,18 @@ const Flatlists1 = ({navigation, data, horizontal}) => {
       : Platform.OS === 'ios'
       ? '66%'
       : '66%';
+  //console.log(data);
+  const addTofav = async id => {
+    try {
+      const key = await getVerifiedKeys(userData.userToken);
+
+      const response = await addFavourite(id, key);
+      dispatch(setSkip(userData.skip));
+      Toast.show(response.message);
+    } catch (error) {
+      console.log('e');
+    }
+  };
   const renderItem = ({item}) => (
     <Pressable
       onPress={() =>
@@ -47,23 +64,52 @@ const Flatlists1 = ({navigation, data, horizontal}) => {
         <View style={{flexDirection: 'column', width: width1}}>
           <View style={styles.textContainer}>
             <Text style={styles.text1}>{item.placeName}</Text>
-            <TouchableOpacity>
-              <Image
-                style={{height: 20, width: 20}}
-                source={require('../assets/images/favourite_iconcopy.png')}
-              />
-            </TouchableOpacity>
+            {userData.userToken !== null ? (
+              userData?.favourite?.favouritePlaces?.length > 0 ? (
+                userData?.favourite?.favouritePlaces?.filter(
+                  e => e.placeId === item._id,
+                ).length > 0 ? (
+                  <TouchableOpacity onPress={() => addTofav(item._id)}>
+                    <Image
+                      style={{height: 20, width: 20}}
+                      source={require('../assets/images/favourite_icon_selected.png')}
+                    />
+                  </TouchableOpacity>
+                ) : (
+                  <TouchableOpacity onPress={() => addTofav(item._id)}>
+                    <Image
+                      style={{height: 20, width: 20}}
+                      source={require('../assets/images/favourite_iconcopy.png')}
+                    />
+                  </TouchableOpacity>
+                )
+              ) : (
+                <TouchableOpacity onPress={() => addTofav(item._id)}>
+                  <Image
+                    style={{height: 20, width: 20}}
+                    source={require('../assets/images/favourite_iconcopy.png')}
+                  />
+                </TouchableOpacity>
+              )
+            ) : (
+              <TouchableOpacity onPress={() => Toast.show('LoginIn First')}>
+                <Image
+                  style={{height: 20, width: 20}}
+                  source={require('../assets/images/favourite_iconcopy.png')}
+                />
+              </TouchableOpacity>
+            )}
           </View>
           <View style={styles.batch}>
             <Text style={{color: 'white'}}>{item.rating * 2}</Text>
           </View>
           <Text style={styles.text2}>
             Indian •{' '}
-            {item.priceRange > 750
+            {item.priceRange === 4
               ? '₹₹₹₹'
-              : item.priceRange > 500
+              : item.priceRange === 3
               ? '₹₹₹'
-              : item.priceRange > 250
+              : item.priceRange === 2
               ? '₹₹'
               : '₹'}{' '}
             {(item.distance.calculated / 1609).toFixed(2)} Km
@@ -92,6 +138,7 @@ const Flatlists1 = ({navigation, data, horizontal}) => {
   );
 };
 const FavouriteList = ({navigation, data, del, setDel}) => {
+  const dispatch=useDispatch()
   const {height, width} = useWindowDimensions();
   const h1 =
     width > height
@@ -111,14 +158,7 @@ const FavouriteList = ({navigation, data, del, setDel}) => {
       : '66%';
   const userData = useSelector(state => state.auth);
 
-  // const removeFav = async (id) => {
-  //   console.log(id);
-  //   const key =await getVerifiedKeys(userData.userToken)
-  //   console.log(key);
-  //   const response = await addFavourite(id,key);
-  //   console.log(response);
-  // };
-// useEffect(()=>{},[del])
+
   const renderItem = ({item}) => (
     <Pressable
       onPress={() =>
@@ -143,14 +183,11 @@ const FavouriteList = ({navigation, data, del, setDel}) => {
             <Text style={styles.text1}>{item.placeName}</Text>
             <TouchableOpacity
               onPress={async () => {
-                setDel(!del);
-                console.log(item._id);
+                
                 const key = await getVerifiedKeys(userData.userToken);
-                console.log(key);
                 const response = await addFavourite(item.placeId, key);
-                console.log(response);
-                //console.log(item._id);
-                // removeFav(item._id);
+                dispatch(setSkip(userData.skip))
+             
               }}>
               <Image
                 style={{height: 16, width: 16}}
@@ -203,13 +240,13 @@ const ReviewList = ({data}) => {
       <View style={styles.mainReview}>
         <Image
           style={{
-            height: 40,
-            width: 40,
+            height: 50,
+            width: 50,
             borderRadius: 50,
             marginTop: 15,
             marginLeft: 18,
           }}
-          source={{uri: item.reviewerImage}}
+          source={{uri: 'https' + item.reviewerImage.substring(4)}}
         />
 
         <View
@@ -223,7 +260,11 @@ const ReviewList = ({data}) => {
           }}>
           <View style={styles.textContainer}>
             <Text style={styles.text1}>{item.reviewBy}</Text>
-            <Text style={styles.text2}>{item.reviewDate.substring(0, 10)}</Text>
+            <Text style={styles.text2}>
+              {moment(new Date(item.reviewDate.toString()))
+                .format('MMMM DD,YYYY')
+                .toString()}
+            </Text>
           </View>
 
           <Text style={styles.text3}>{item.review}</Text>

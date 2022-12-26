@@ -20,9 +20,15 @@ import {AirbnbRating} from 'react-native-ratings';
 import LinearGradient from 'react-native-linear-gradient';
 import Geolocation from '@react-native-community/geolocation';
 import Toast from 'react-native-simple-toast';
-import {addFavourite, getParticularPlace} from '../services/Places';
-import {useSelector} from 'react-redux';
+import {
+  addFavourite,
+  getFavouriteId,
+  getParticularPlace,
+} from '../services/Places';
+import {useDispatch, useSelector} from 'react-redux';
 import {getVerifiedKeys} from '../Function';
+import Share from 'react-native-share';
+import {setFavourite, setSkip} from '../redux/AuthSlice';
 
 const IndividualRestaurant = ({navigation, route}) => {
   const userData = useSelector(state => state.auth);
@@ -30,7 +36,7 @@ const IndividualRestaurant = ({navigation, route}) => {
   const [modal, setModal] = useState(false);
   const [fav, setFav] = useState(false);
   const [loadingScreen, setLoadingScreen] = useState(false);
-
+  const dispatch = useDispatch();
   const mapRef = useRef(null);
   const [currentLongitude, setCurrentLongitude] = useState('');
   const [currentLatitude, setCurrentLatitude] = useState('');
@@ -51,6 +57,15 @@ const IndividualRestaurant = ({navigation, route}) => {
       : Platform.OS === 'ios'
       ? '100%'
       : '100%';
+
+  useEffect(() => {
+    setTimeout(async () => {
+      const key = await getVerifiedKeys(userData.userToken);
+      const response = await getFavouriteId(key);
+      dispatch(setFavourite(response));
+    }, 500);
+  }, [userData.skip]);
+
   useEffect(() => {
     const getOneTimeLocation = () => {
       setLoadingScreen(true);
@@ -68,21 +83,39 @@ const IndividualRestaurant = ({navigation, route}) => {
       };
     };
     getOneTimeLocation();
-  }, []);
+  }, [userData.skip]);
 
   const rate = () => {
     // console.log('jj');
     setModal(true);
   };
-  const favourite = async () => {
+  // console.log('jj',userData);
+  const addFav = async () => {
     try {
       const key = await getVerifiedKeys(userData.userToken);
       const response = await addFavourite(route.params.id, key);
+      dispatch(setSkip(userData.skip));
       Toast.show(response.message);
     } catch (error) {
       console.log('eee');
     }
-    setFav(!fav);
+  };
+ // console.log(userData.favourite);
+  const share = async () => {
+    shareOptions = {
+      url: 'https' + particularPlace?.placeImage?.substring(4),
+      message: `Place Name:${particularPlace?.placeName}${'\n'}Address:${
+        particularPlace?.address
+      }${'\n'}City:${particularPlace?.city}${'\n'}Phone No:${
+        particularPlace?.placePhone
+      }${'\n'}Rating:${particularPlace?.rating}${'\n'}`,
+    };
+    try {
+      const shareResponse = await Share.open(shareOptions);
+      Toast.show('Shared Successfully');
+    } catch (error) {
+      console.log('error while sharing');
+    }
   };
   if (loadingScreen) {
     return (
@@ -92,7 +125,7 @@ const IndividualRestaurant = ({navigation, route}) => {
       </SafeAreaView>
     );
   }
-console.log('id',route.params.id);
+
   return (
     <SafeAreaView style={styles.main}>
       <ScrollView
@@ -100,7 +133,7 @@ console.log('id',route.params.id);
         showsHorizontalScrollIndicator={false}
         showsVerticalScrollIndicator={false}>
         <ImageBackground
-          style={[styles.ImageBackground, {height: imgHeight}]}
+          style={[styles.imageBackground, {height: imgHeight}]}
           source={{uri: 'https' + particularPlace?.placeImage?.substring(4)}}>
           <View style={styles.header}>
             <TouchableOpacity onPressOut={() => navigation.goBack()}>
@@ -112,22 +145,45 @@ console.log('id',route.params.id);
 
             <Text style={styles.headetText}>{particularPlace?.placeName}</Text>
             <View style={styles.shareFavView}>
-              <Image
-                style={{height: 22, width: 22}}
-                source={require('../assets/images/share_icon.png')}
-              />
-              {fav ? (
-                <TouchableOpacity onPress={favourite}>
+              <TouchableOpacity onPress={share}>
+                <Image
+                  style={{height: 22, width: 22}}
+                  source={require('../assets/images/share_icon.png')}
+                />
+              </TouchableOpacity>
+
+              {userData.userToken !== null ? (
+                userData.favourite.favouritePlaces?.length > 0 ? (
+                  userData.favourite.favouritePlaces.filter(
+                    e => e.placeId === route.params.id,
+                  ).length > 0 ? (
+                    <TouchableOpacity onPress={addFav}>
+                      <Image
+                        style={{height: 22, width: 22, resizeMode: 'contain'}}
+                        source={require('../assets/images/favourite_icon_selected.png')}
+                      />
+                    </TouchableOpacity>
+                  ) : (
+                    <TouchableOpacity onPress={addFav}>
+                      <Image
+                        style={{height: 22, width: 22, resizeMode: 'contain'}}
+                        source={require('../assets/images/favourite_icon.png')}
+                      />
+                    </TouchableOpacity>
+                  )
+                ) : (
+                  <TouchableOpacity onPress={addFav}>
+                    <Image
+                      style={{height: 22, width: 22, resizeMode: 'contain'}}
+                      source={require('../assets/images/favourite_icon.png')}
+                    />
+                  </TouchableOpacity>
+                )
+              ) : (
+                <TouchableOpacity onPress={() => Toast.show('Login First')}>
                   <Image
                     style={{height: 22, width: 22, resizeMode: 'contain'}}
                     source={require('../assets/images/favourite_icon.png')}
-                  />
-                </TouchableOpacity>
-              ) : (
-                <TouchableOpacity onPress={favourite}>
-                  <Image
-                    style={{height: 22, width: 22, resizeMode: 'contain'}}
-                    source={require('../assets/images/favourite_icon_selected.png')}
                   />
                 </TouchableOpacity>
               )}
@@ -163,10 +219,22 @@ console.log('id',route.params.id);
             </Pressable>
           </View>
           <View>
-            <Image
-              style={{height: 50, width: 50}}
-              source={require('../assets/images/photos_icon.png')}
-            />
+            <Pressable
+              onPress={() =>
+                navigation.navigate(
+                  'Photos',
+                  (obj = {
+                    id: route.params.id,
+                    name: particularPlace?.placeName,
+                  }),
+                )
+              }>
+              <Image
+                style={{height: 50, width: 50}}
+                source={require('../assets/images/photos_icon.png')}
+              />
+            </Pressable>
+
             <Text style={styles.ratingText}>Photos</Text>
           </View>
           <Pressable
@@ -316,11 +384,13 @@ console.log('id',route.params.id);
           </View>
         </Modal>
       </ScrollView>
-      <View style={styles.btn}>
-        <Pressable>
+      <Pressable
+        onPress={() => navigation.navigate('AddReview', route.params.id)}
+        style={{width: '100%'}}>
+        <View style={styles.btn}>
           <Text style={styles.btnText}>Add Review</Text>
-        </Pressable>
-      </View>
+        </View>
+      </Pressable>
     </SafeAreaView>
   );
 };
@@ -333,7 +403,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     backgroundColor: 'white',
   },
-  ImageBackground: {
+  imageBackground: {
     width: '100%',
     height: 250,
   },

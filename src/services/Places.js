@@ -119,13 +119,12 @@ export const searchPlaceWithOutFilter = async (lat, long, place) => {
     console.log('An error has occurred in searchPlaceWithOutFilter');
   }
 };
-export const addFavourite = async (id,token) => {
-
+export const addFavourite = async (id, token) => {
   try {
     const response = await axios.post(
       `${BASE_URl}/addFavourite`,
       {
-        _id:id,
+        _id: id,
       },
       {
         headers: {
@@ -138,7 +137,6 @@ export const addFavourite = async (id,token) => {
     console.log('An error has occurred in addFavourite');
   }
 };
-
 
 export const searchFavourite = async (text, lat, long, token) => {
   try {
@@ -158,5 +156,68 @@ export const searchFavourite = async (text, lat, long, token) => {
     return response.data;
   } catch (error) {
     console.log('An error has occurred in searchFavourite');
+  }
+};
+
+export const searchPlaceWithFilter = async (obj, token) => {
+  try {
+    const response = await axios.post(`${BASE_URl}/filterSearch`, obj, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    return response.data;
+  } catch (error) {
+    console.log('An error has occurred in searchPlaceWithFilter');
+  }
+};
+export const getReviewImage = async (id, token) => {
+  try {
+    const response = await axios.post(
+      `${BASE_URl}/getReviewImage`,
+      {
+        _id: id,
+      },
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      },
+    );
+    return response.data;
+  } catch (error) {
+    console.log('An error has occurred in getReviewImage');
+  }
+};
+export const addReviewImage = async (image, token) => {
+  console.log(image);
+  try {
+    let res = await fetch(`${BASE_URl}/addReviewImage`, {
+      method: 'post',
+      body: image,
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    let data = await res.json();
+    return data;
+  } catch (er) {
+    Toast.show('Error in addReviewImage');
+  }
+};
+
+export const getFavouriteId = async (token) => {
+  try {
+    const response = await axios.get(
+      `${BASE_URl}/getFavouriteId`,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      },
+    );
+    return response.data;
+  } catch (error) {
+    console.log('An error has occurred in getFavouriteId');
   }
 };

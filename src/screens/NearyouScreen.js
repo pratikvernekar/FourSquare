@@ -17,10 +17,11 @@ import React, {useEffect, useRef, useState} from 'react';
 import MapView, {Marker} from 'react-native-maps';
 import {Flatlists1} from '../components/Flatlists';
 import {getNearPlaces} from '../services/Places';
-import {useDispatch} from 'react-redux';
+import {useDispatch, useSelector} from 'react-redux';
 import {setLatLong} from '../redux/AuthSlice';
 
 const NearyouScreen = ({navigation}) => {
+  const userData=useSelector(state=>state.auth)
   const mapRef = useRef(null);
   const dispatch = useDispatch();
   const [nearPlaces, setNearPlaces] = useState([]);
@@ -63,7 +64,7 @@ const NearyouScreen = ({navigation}) => {
       }
     };
     requestLocationPermission();
-  }, []);
+  }, [userData.skip]);
 
   const getOneTimeLocation = () => {
     setLoading(true);
@@ -95,7 +96,7 @@ const NearyouScreen = ({navigation}) => {
             Toast.show('Failed to animate direction');
           }
         }, 1000);
-        Toast.show('You are Here');
+        
         const currentLongitude = position.coords.longitude;
         const currentLatitude = position.coords.latitude;
         const obj = {
@@ -153,7 +154,7 @@ const NearyouScreen = ({navigation}) => {
           <ActivityIndicator size="large" color="#351247" />
         </View>
       ) : null}
-      {nearPlaces.length > 0 ? (
+      {nearPlaces?.length > 0 ? (
         <View style={{flex: 1}}>
           <Flatlists1
             navigation={navigation}

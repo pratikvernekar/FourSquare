@@ -8,10 +8,24 @@ import {
   Pressable,
   TouchableOpacity,
 } from 'react-native';
-import React from 'react';
+import React, {useEffect} from 'react';
 import TopNavigation from '../Navigations/TopNavigation';
+import {useDispatch, useSelector} from 'react-redux';
+import {getFavouriteId} from '../services/Places';
+import {getVerifiedKeys} from '../Function';
+import {setFavourite} from '../redux/AuthSlice';
 
 const TopNavScreen = ({navigation}) => {
+  const userData = useSelector(state => state.auth);
+  const dispatch = useDispatch();
+  useEffect(() => {
+    setTimeout(async () => {
+      const key = await getVerifiedKeys(userData.userToken);
+      const response = await getFavouriteId(key);
+      dispatch(setFavourite(response));
+    }, 500);
+  }, [userData.skip]);
+
   return (
     <SafeAreaView style={styles.main}>
       <StatusBar backgroundColor="#310D20" />
@@ -28,11 +42,14 @@ const TopNavScreen = ({navigation}) => {
           style={styles.img}
         />
         <View style={styles.seachFilterView}>
-          <Image
-            source={require('../assets/images/filter_icon.png')}
-            style={styles.imgSearch}
-          />
-          <TouchableOpacity onPress={()=>navigation.navigate('Search')}>
+          <TouchableOpacity onPress={() => navigation.navigate('Filter')}>
+            <Image
+              source={require('../assets/images/filter_icon.png')}
+              style={styles.imgSearch}
+            />
+          </TouchableOpacity>
+
+          <TouchableOpacity onPress={() => navigation.navigate('Search')}>
             <Image
               source={require('../assets/images/search_icon.png')}
               style={styles.imgSearch}

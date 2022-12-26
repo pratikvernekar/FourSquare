@@ -19,7 +19,6 @@ const AboutScreen = ({navigation}) => {
     setTimeout(async () => {
       setLoading(true);
       const response = await getAboutUs();
-      console.log(response);
       setText(response[0].aboutUs);
       setLoading(false);
     }, 500);

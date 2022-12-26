@@ -12,9 +12,10 @@ import {
 } from 'react-native';
 import React, {useEffect, useState} from 'react';
 import {searchFavourite} from '../services/Places';
-import {useSelector} from 'react-redux';
+import {useDispatch, useSelector} from 'react-redux';
 import {getVerifiedKeys} from '../Function';
 import {FavouriteList} from '../components/Flatlists';
+import {setSkip} from '../redux/AuthSlice';
 
 const FavouriteScreen = ({navigation}) => {
   const {height, width} = useWindowDimensions();
@@ -27,11 +28,10 @@ const FavouriteScreen = ({navigation}) => {
       ? '100%'
       : '100%';
   const [loading, setLoading] = useState(false);
-  const [del, setDel] = useState(false);
   const [text, setText] = useState('');
   const [favData, setFavData] = useState([]);
   const userData = useSelector(state => state.auth);
-
+  const dispatch = useDispatch();
   useEffect(() => {
     setTimeout(async () => {
       setLoading(true);
@@ -42,12 +42,13 @@ const FavouriteScreen = ({navigation}) => {
         userData.longitude,
         key,
       );
+  
       setFavData(response);
       setLoading(false);
     }, 500);
-  }, [text, del]);
-  useEffect(() => {}, [del]);
-  console.log(del);
+  }, [text, userData.skip]);
+  // useEffect(() => {}, [del]);
+  // console.log(del);
 
   return (
     <SafeAreaView styles={styles.main}>
@@ -101,13 +102,25 @@ const FavouriteScreen = ({navigation}) => {
           />
         </View>
       ) : null}
-      <View style={{height: h1, backgroundColor: 'white',}}>
+      <View style={{height: h1, backgroundColor: 'white'}}>
         {favData.length > 0 ? (
-          <FavouriteList data={favData} del={del} setDel={setDel} />
-        ) : null}
-      </View>
-      <View style={{borderWidth:5,height:200}}>
-        <Text>jadjadh</Text>
+          <FavouriteList
+            data={favData}
+            navigation={navigation}
+          />
+        ) : (
+          <View style={{alignItems: 'center'}}>
+            <Text
+              style={{
+                fontSize: 22,
+                color: 'black',
+                fontFamily: 'AvenirLTStd-Book',
+                fontWeight: '600',
+              }}>
+              No Results
+            </Text>
+          </View>
+        )}
       </View>
     </SafeAreaView>
   );

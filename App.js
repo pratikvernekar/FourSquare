@@ -16,6 +16,8 @@ import NavigationFunctionality from './src/Navigations/NavigationFunctionality';
 import DrawerNav from './src/Navigations/Drawer';
 import FavouriteScreen from './src/screens/FavouriteScreen';
 import SearchScreen from './src/screens/SearchScreen';
+import OtpScreen from './src/screens/OtpScreen';
+import ResetPassword from './src/screens/ResetPasswordScreen';
 
 let persistor = persistStore(store);
 

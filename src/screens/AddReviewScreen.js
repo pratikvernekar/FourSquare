@@ -11,35 +11,72 @@ import {
 } from 'react-native';
 import React, {useRef, useState} from 'react';
 import ImagePicker from 'react-native-image-crop-picker';
-import {addReview} from '../services/Places';
+import {addReview, addReviewImage} from '../services/Places';
 import Toast from 'react-native-simple-toast';
+import uuid from 'react-native-uuid';
+import {getVerifiedKeys} from '../Function';
+import {useSelector} from 'react-redux';
 
 const AddReviewScreen = ({navigation, route}) => {
+  const userData = useSelector(state => state.auth);
   const [image, setImage] = useState(false);
   const [text, setText] = useState('');
-  const ref=useRef()
+  const [imageUri, setImageUri] = useState([]);
+  const ref = useRef();
 
-  const addRev = async () => {
-    try {
-      const response = await addReview(route.params, text);
-      console.log(response);
-      ref.current.clear()
-      Toast.show(response.message);
-    } catch (error) {
-      console.log(error);
+  const revAdd = async () => {
+    if (text !== '') {
+      try {
+        var key = await getVerifiedKeys(userData.userToken);
+        const response = await addReview(route.params, text, key);
+        console.log(response);
+        ref.current.clear();
+        setImageUri([])
+        Toast.show(response.message);
+      } catch (error) {
+        console.log(error);
+      }
+    } else {
+      Toast.show('Write Review');
+    }
+
+    if (imageUri.length > 0) {
+      const payload = new FormData();
+      payload.append('_id', route.params);
+      for (let i = 0; i < imageUri.length; i++) {
+        payload.append(imageUri[i].name, {
+          uri: imageUri[i].path,
+          type: imageUri[i].mime,
+          name: `${imageUri[i].filename}.${imageUri[i].mime.substring(
+            imageUri[i].mime.indexOf('/') + 1,
+          )}`,
+        });
+      }
+   const resp=await addReviewImage(payload,key)
+   console.log(resp);
     }
   };
-  console.log(text);
-  const [imageUri, setImageUri] = useState('');
+  console.log(route);
+
   const selectImg = () => {
     ImagePicker.openPicker({
       width: 300,
       height: 400,
       cropping: true,
+      // multiple: true
     })
       .then(image => {
+        const obj = {
+          id: uuid.v4(),
+          name: 'image',
+          path: image.path,
+          fileName: image.filename,
+          mime: image.mime,
+        };
+
         // console.log(image);
-        setImageUri(image.path);
+        setImageUri(preVal => [...preVal, obj]);
+
         setImage(true);
       })
       .catch(e => {
@@ -47,6 +84,7 @@ const AddReviewScreen = ({navigation, route}) => {
       });
   };
   console.log(route.params);
+  console.log('33', imageUri);
   return (
     <SafeAreaView style={{flex: 1, backgroundColor: 'white'}}>
       <View style={styles.header}>
@@ -85,11 +123,15 @@ const AddReviewScreen = ({navigation, route}) => {
             alignSelf: 'center',
             flexDirection: 'row',
           }}>
-          {image ? (
-            <View style={styles.imgView}>
-              <Image source={{uri: imageUri}} style={styles.imgImage} />
-            </View>
-          ) : null}
+          {imageUri.length > 0
+            ? imageUri.map(e => {
+                return (
+                  <View style={styles.imgView}>
+                    <Image source={{uri: e.path}} style={styles.imgImage} />
+                  </View>
+                );
+              })
+            : null}
 
           <Pressable onPress={selectImg}>
             <View style={styles.addPickView}>
@@ -101,11 +143,11 @@ const AddReviewScreen = ({navigation, route}) => {
           </Pressable>
         </View>
       </ScrollView>
-      <View style={styles.btn}>
-        <Pressable onPress={addRev}>
+      <Pressable onPress={revAdd}>
+        <View style={styles.btn}>
           <Text style={styles.btnText}>Submit</Text>
-        </Pressable>
-      </View>
+        </View>
+      </Pressable>
     </SafeAreaView>
   );
 };
@@ -133,7 +175,7 @@ const styles = StyleSheet.create({
   imgBack: {
     resizeMode: 'contain',
     height: 25,
-    width: 20,
+    width: 25,
   },
   overView: {
     width: '90%',
