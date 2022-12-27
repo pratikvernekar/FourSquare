@@ -11,8 +11,10 @@ import {Flatlists1} from '../components/Flatlists';
 import {getTopPlace} from '../services/Places';
 import Geolocation from '@react-native-community/geolocation';
 import Toast from 'react-native-simple-toast';
+import {useSelector} from 'react-redux';
 
 const Toppick = ({navigation}) => {
+  const userData = useSelector(state => state.auth);
   const [loading, setLoading] = useState(false);
   const [topPlaces, setTopPlaces] = useState([]);
   useEffect(() => {
@@ -21,7 +23,7 @@ const Toppick = ({navigation}) => {
       // setTopPlaces(response);
       getOneTimeLocation();
     }, 500);
-  }, []);
+  }, [userData.ratings]);
 
   const getOneTimeLocation = () => {
     Geolocation.getCurrentPosition(
@@ -45,8 +47,7 @@ const Toppick = ({navigation}) => {
             Toast.show('Failed to animate direction');
           }
         }, 500);
-        Toast.show('You are Here');
-        
+       
       },
 
       error => {

@@ -15,11 +15,12 @@ import Toast from 'react-native-simple-toast';
 const Coffee = ({navigation}) => {
   const [coffeePlaces, setCoffeePlaces] = useState([]);
   const [loading, setLoading] = useState(false);
+  const userData = useSelector(state => state.auth);
   useEffect(() => {
     setTimeout(async () => {
       getOneTimeLocation();
     }, 500);
-  }, []);
+  }, [userData.ratings]);
   const getOneTimeLocation = () => {
     Geolocation.getCurrentPosition(
       position => {
@@ -37,7 +38,6 @@ const Coffee = ({navigation}) => {
             Toast.show('Failed to animate direction');
           }
         }, 500);
-        Toast.show('You are Here');
       },
 
       error => {

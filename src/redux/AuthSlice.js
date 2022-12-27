@@ -10,6 +10,7 @@ const authenticateSlice = createSlice({
     longitude: '',
     skip: false,
     favourite: [],
+    ratings: false,
   },
 
   reducers: {
@@ -32,9 +33,12 @@ const authenticateSlice = createSlice({
     setSkip: (state, action) => {
       state.skip = !action.payload;
     },
+    setRatings: (state, action) => {
+      state.ratings = !action.payload;
+    },
   },
 });
 
-export const {login, logOut, setLatLong, setFavourite, setSkip} =
+export const {login, logOut, setLatLong, setFavourite, setSkip, setRatings} =
   authenticateSlice.actions;
 export default authenticateSlice.reducer;

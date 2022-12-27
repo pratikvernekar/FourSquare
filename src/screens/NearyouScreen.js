@@ -21,7 +21,7 @@ import {useDispatch, useSelector} from 'react-redux';
 import {setLatLong} from '../redux/AuthSlice';
 
 const NearyouScreen = ({navigation}) => {
-  const userData=useSelector(state=>state.auth)
+  const userData = useSelector(state => state.auth);
   const mapRef = useRef(null);
   const dispatch = useDispatch();
   const [nearPlaces, setNearPlaces] = useState([]);
@@ -64,7 +64,7 @@ const NearyouScreen = ({navigation}) => {
       }
     };
     requestLocationPermission();
-  }, [userData.skip]);
+  }, [userData.skip, userData.ratings]);
 
   const getOneTimeLocation = () => {
     setLoading(true);
@@ -96,7 +96,7 @@ const NearyouScreen = ({navigation}) => {
             Toast.show('Failed to animate direction');
           }
         }, 1000);
-        
+
         const currentLongitude = position.coords.longitude;
         const currentLatitude = position.coords.latitude;
         const obj = {

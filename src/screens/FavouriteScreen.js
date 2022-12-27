@@ -25,8 +25,8 @@ const FavouriteScreen = ({navigation}) => {
         ? '80%'
         : '78%'
       : Platform.OS === 'ios'
-      ? '100%'
-      : '100%';
+      ? '85%'
+      : '85%';
   const [loading, setLoading] = useState(false);
   const [text, setText] = useState('');
   const [favData, setFavData] = useState([]);
@@ -42,7 +42,7 @@ const FavouriteScreen = ({navigation}) => {
         userData.longitude,
         key,
       );
-  
+
       setFavData(response);
       setLoading(false);
     }, 500);
@@ -102,12 +102,15 @@ const FavouriteScreen = ({navigation}) => {
           />
         </View>
       ) : null}
-      <View style={{height: h1, backgroundColor: 'white'}}>
+      <View
+        style={{
+          height: h1,
+          backgroundColor: 'white',
+         
+          marginBottom: 20,
+        }}>
         {favData.length > 0 ? (
-          <FavouriteList
-            data={favData}
-            navigation={navigation}
-          />
+          <FavouriteList data={favData} navigation={navigation} />
         ) : (
           <View style={{alignItems: 'center'}}>
             <Text
@@ -132,6 +135,7 @@ const styles = StyleSheet.create({
   main: {
     flex: 1,
     backgroundColor: 'white',
+    borderWidth: 0,
   },
   header: {
     width: '100%',

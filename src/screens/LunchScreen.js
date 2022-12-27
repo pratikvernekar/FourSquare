@@ -10,15 +10,17 @@ import {Flatlists1} from '../components/Flatlists';
 import {getLunchPlace} from '../services/Places';
 import Geolocation from '@react-native-community/geolocation';
 import Toast from 'react-native-simple-toast';
+import {useSelector} from 'react-redux';
 
 const Lunch = ({navigation}) => {
   const [lunchPlaces, setLunchPlaces] = useState([]);
   const [loading, setLoading] = useState(false);
+  const userData = useSelector(state => state.auth);
   useEffect(() => {
     setTimeout(async () => {
       getOneTimeLocation();
     }, 500);
-  }, []);
+  }, [userData.ratings]);
   const getOneTimeLocation = () => {
     Geolocation.getCurrentPosition(
       position => {
@@ -37,7 +39,7 @@ const Lunch = ({navigation}) => {
             Toast.show('Failed to animate direction');
           }
         }, 500);
-        Toast.show('You are Here');
+      
       },
 
       error => {

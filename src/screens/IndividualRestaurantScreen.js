@@ -22,13 +22,14 @@ import Geolocation from '@react-native-community/geolocation';
 import Toast from 'react-native-simple-toast';
 import {
   addFavourite,
+  addRating,
   getFavouriteId,
   getParticularPlace,
 } from '../services/Places';
 import {useDispatch, useSelector} from 'react-redux';
 import {getVerifiedKeys} from '../Function';
 import Share from 'react-native-share';
-import {setFavourite, setSkip} from '../redux/AuthSlice';
+import {setFavourite, setRatings, setSkip} from '../redux/AuthSlice';
 
 const IndividualRestaurant = ({navigation, route}) => {
   const userData = useSelector(state => state.auth);
@@ -37,6 +38,7 @@ const IndividualRestaurant = ({navigation, route}) => {
   const [fav, setFav] = useState(false);
   const [loadingScreen, setLoadingScreen] = useState(false);
   const dispatch = useDispatch();
+  const [rate, setRate] = useState(0);
   const mapRef = useRef(null);
   const [currentLongitude, setCurrentLongitude] = useState('');
   const [currentLatitude, setCurrentLatitude] = useState('');
@@ -83,13 +85,19 @@ const IndividualRestaurant = ({navigation, route}) => {
       };
     };
     getOneTimeLocation();
-  }, [userData.skip]);
+  }, [userData.skip, userData.ratings]);
 
-  const rate = () => {
-    // console.log('jj');
-    setModal(true);
+  const addRate = async () => {
+    const key = await getVerifiedKeys(userData.userToken);
+    var response = await addRating(route.params.id, rate, key);
+    dispatch(setRatings(userData.ratings));
+    Toast.show(response.message);
+
+    setTimeout(() => {
+      setModal(false);
+    }, 1500);
   };
-  // console.log('jj',userData);
+
   const addFav = async () => {
     try {
       const key = await getVerifiedKeys(userData.userToken);
@@ -100,7 +108,7 @@ const IndividualRestaurant = ({navigation, route}) => {
       console.log('eee');
     }
   };
- // console.log(userData.favourite);
+  // console.log(userData.favourite);
   const share = async () => {
     shareOptions = {
       url: 'https' + particularPlace?.placeImage?.substring(4),
@@ -210,7 +218,7 @@ const IndividualRestaurant = ({navigation, route}) => {
 
         <View style={styles.ratingPhotosView}>
           <View>
-            <Pressable onPress={rate}>
+            <Pressable onPress={() => setModal(true)}>
               <Image
                 style={{height: 50, width: 50}}
                 source={require('../assets/images/rating_icon.png')}
@@ -317,10 +325,16 @@ const IndividualRestaurant = ({navigation, route}) => {
         <Modal visible={modal} animationType="fade" transparent={true}>
           <View style={{flex: 1, backgroundColor: '#7A7A7A7C'}}>
             <SafeAreaView
-              style={{flex: 1, alignItems: 'center', justifyContent: 'center'}}>
+              style={{
+                flex: 1,
+                alignItems: 'center',
+                justifyContent: 'center',
+              }}>
               <View style={styles.modalContainer}>
-                <View style={styles.cancelView}>
-                  <Pressable onPress={() => setModal(false)}>
+                <Pressable
+                  onPress={() => setModal(false)}
+                  style={styles.cancelView}>
+                  <View>
                     <Image
                       style={{
                         height: 12,
@@ -328,8 +342,8 @@ const IndividualRestaurant = ({navigation, route}) => {
                       }}
                       source={require('../assets/images/close_icon_grey_xxxhdpi.png')}
                     />
-                  </Pressable>
-                </View>
+                  </View>
+                </Pressable>
 
                 <Text
                   style={{
@@ -337,7 +351,7 @@ const IndividualRestaurant = ({navigation, route}) => {
                     fontWeight: '600',
                     fontSize: 20,
                     fontFamily: 'AvenirLTStd-Book',
-                    marginTop: 40,
+                    marginTop: 50,
                   }}>
                   Overall rating
                 </Text>
@@ -347,9 +361,9 @@ const IndividualRestaurant = ({navigation, route}) => {
                     fontWeight: '800',
                     fontSize: 24,
                     fontFamily: 'AvenirLTStd-Book',
-                    marginTop: 10,
+                    marginTop: 20,
                   }}>
-                  4.5
+                  {particularPlace.rating}
                 </Text>
                 <Text
                   style={{
@@ -363,17 +377,18 @@ const IndividualRestaurant = ({navigation, route}) => {
                   }}>
                   How would you rate your experience?
                 </Text>
-                <View style={{marginTop: Platform.OS === 'ios' ? 20 : 10}}>
+                <View style={{marginTop: Platform.OS === 'ios' ? 30 : 20}}>
                   <AirbnbRating
                     count={5}
-                    defaultRating={3}
+                    defaultRating={particularPlace.rating}
                     size={20}
-                    isDisabled={true}
+                    isDisabled={false}
                     showRating={false}
+                    onFinishRating={rate => setRate(rate)}
                   />
                 </View>
                 <Pressable
-                  onPress={() => setModal(false)}
+                  onPress={addRate}
                   style={{width: '100%', position: 'relative'}}>
                   <View style={styles.btnSubmit}>
                     <Text style={styles.btnTextSumit}>Submit</Text>
@@ -505,7 +520,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     borderTopWidth: 1,
     borderColor: '#c7c7c7',
-    marginTop: 16,
+    marginTop: 50,
   },
   btnText: {
     color: 'white',
@@ -538,7 +553,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     borderWidth: 1,
     width: '80%',
-    height: 300,
+    height: 370,
 
     borderColor: '#c7c7c7',
     position: 'relative',

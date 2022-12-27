@@ -206,10 +206,27 @@ export const addReviewImage = async (image, token) => {
   }
 };
 
-export const getFavouriteId = async (token) => {
+export const getFavouriteId = async token => {
   try {
-    const response = await axios.get(
-      `${BASE_URl}/getFavouriteId`,
+    const response = await axios.get(`${BASE_URl}/getFavouriteId`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    return response.data;
+  } catch (error) {
+    console.log('An error has occurred in getFavouriteId');
+  }
+};
+
+export const addRating = async (id, rate, token) => {
+  try {
+    const response = await axios.post(
+      `${BASE_URl}/addRating`,
+      {
+        _id: id,
+        rating: rate,
+      },
       {
         headers: {
           Authorization: `Bearer ${token}`,
@@ -218,6 +235,6 @@ export const getFavouriteId = async (token) => {
     );
     return response.data;
   } catch (error) {
-    console.log('An error has occurred in getFavouriteId');
+    console.log('An error has occurred in addRating');
   }
 };
