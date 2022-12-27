@@ -18,7 +18,7 @@ import {
 } from '@react-navigation/drawer';
 import {ScrollView} from 'react-native-gesture-handler';
 import {useDispatch, useSelector} from 'react-redux';
-import {logOut} from '../redux/AuthSlice';
+import {logOut, setUserName} from '../redux/AuthSlice';
 import {addProfileImage, getProfile} from '../services/UserAuth';
 import {getVerifiedKeys} from '../Function';
 import ImagePicker from 'react-native-image-crop-picker';
@@ -34,7 +34,9 @@ const CustomDrawer = props => {
       setLoading(true);
       const key = await getVerifiedKeys(authData.userToken);
       const response = await getProfile(key);
+     // console.log(response);
       setUserData(response);
+      dispatch(setUserName(response.userName));
       setLoading(false);
     }, 500);
   }, [img]);
@@ -58,7 +60,7 @@ const CustomDrawer = props => {
         await addProfileImage(payload, cred);
         setImg(!img);
       })
-      .catch(er => Toast.show('User cancelled selection'));
+      .catch(er =>console.log('User cancelled selection'));
   };
 
   return (
@@ -167,7 +169,10 @@ const CustomDrawer = props => {
                 </View>
               </Pressable>
               {authData.userToken !== null ? (
-                <Pressable onPress={() => dispatch(logOut())}>
+                <Pressable onPress={() =>{
+                  
+                  Toast.show('Logged Out')
+                  dispatch(logOut())}}>
                   <View style={styles.drawerItemView}>
                     <Image
                       source={require('../assets/images/sidemenu/logout.png')}

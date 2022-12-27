@@ -24,14 +24,14 @@ const AboutScreen = ({navigation}) => {
     }, 500);
   }, []);
 
-  if (loading) {
-    return (
-      <SafeAreaView
-        style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
-        <ActivityIndicator color="#351247" size="large" />
-      </SafeAreaView>
-    );
-  }
+  // if (loading) {
+  //   return (
+  //     <SafeAreaView
+  //       style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
+  //       <ActivityIndicator color="#351247" size="large" />
+  //     </SafeAreaView>
+  //   );
+  // }
 
   return (
     <SafeAreaView style={styles.main}>
@@ -54,9 +54,17 @@ const AboutScreen = ({navigation}) => {
       </View>
 
       <View style={styles.textContainer}>
-        <ScrollView>
-          <Text style={styles.text}>{text}</Text>
-        </ScrollView>
+        {loading ? (
+          <SafeAreaView
+            style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
+            <ActivityIndicator color="#351247" size="large" />
+          </SafeAreaView>
+        ) : null}
+        {text ? (
+          <ScrollView>
+            <Text style={styles.text}>{text}</Text>
+          </ScrollView>
+        ) : null}
       </View>
     </SafeAreaView>
   );

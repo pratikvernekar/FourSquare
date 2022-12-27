@@ -40,6 +40,7 @@ const FilterScreen = ({navigation}) => {
   const [filterData, setFilterData] = useState('');
   const [showList, setShowList] = useState(false);
   const [showFilter, setShowFilter] = useState(true);
+  const [nearMe, setNearMe] = useState(false);
 
   const filter = async () => {
     setLoading(true);
@@ -65,16 +66,16 @@ const FilterScreen = ({navigation}) => {
     if (r4 === true) obj['price'] = 4;
     if (radius !== '') obj['radius'] = parseInt(radius);
     const response = await searchPlaceWithFilter(obj, userData.userToken);
-    console.log(response);
+
     setLoading(false);
 
     if (response !== undefined) {
       setFilterData(response);
       setShowFilter(false);
+      setNearMe(false);
       setShowList(true);
     }
   };
-
   return (
     <SafeAreaView style={styles.main}>
       <View style={styles.header}>
@@ -101,27 +102,29 @@ const FilterScreen = ({navigation}) => {
               source={require('../assets/images/serch_xxxhdpi.png')}
               onChangeText={async txt => {
                 setText(txt);
+                if (txt.length === 0) {
+                  setShowList(false);
+                }
               }}
-              // onFocus={txt => {
-              //   setSearchedPlacesVisible(false);
-              //   setNearBy(true);
-              //   setNearMe(false);
-              //   if (txt.length === 0) {
-              //     setSearchedPlacesVisible(false);
-              //   }
-              // }}
+              onFocus={txt => {
+                setShowFilter(true);
+                setNearMe(false);
+                setShowList(false);
+                // if (txt.length === 0) {
+                //   setSearchedPlacesVisible(false);
+                // }
+              }}
             />
             <SearchInput
               placeholder="Near me"
               placeholderTextColor="grey"
               source={require('../assets/images/near_me_xxxhdpi.png')}
               onChangeText={text => {}}
-              //   onFocus={() => {
-              //     setNearBy(false);
-              //     setNearMe(true);
-              //     setSearchedPlacesVisible(false);
-              //     setMapView(false);
-              //   }}
+              onFocus={() => {
+                setShowFilter(false);
+                setNearMe(true);
+                setShowList(false);
+              }}
             />
           </View>
           <TouchableOpacity onPress={filter}>
@@ -129,7 +132,7 @@ const FilterScreen = ({navigation}) => {
           </TouchableOpacity>
         </View>
       </View>
-      {loading ? <ActivityIndicator size={39} /> : null}
+      {loading ? <ActivityIndicator size={40} color="#370f24" /> : null}
       {showFilter ? (
         <ScrollView>
           <Text style={styles.nearYouText}>Sort by</Text>
@@ -443,20 +446,43 @@ const FilterScreen = ({navigation}) => {
           </View>
         </ScrollView>
       ) : null}
+      {nearMe ? (
+        <>
+          <ScrollView>
+            <View style={styles.nearMeView}>
+              <Image
+                source={require('../assets/images/location_icon.png')}
+                style={styles.imgFilter}
+              />
+              <Text style={styles.nearMeText}>Use my current location</Text>
+            </View>
+            <View style={styles.nearMeView}>
+              <Image
+                source={require('../assets/images/map_icon.png')}
+                style={styles.imgFilter}
+              />
+              <Text style={styles.nearMeText}>Select Search area from map</Text>
+            </View>
+          </ScrollView>
+        </>
+      ) : null}
 
       {showList ? (
-        <Flatlists1 data={filterData} navigation={navigation} />
-      ) : // <View style={{alignSelf:'center'}}>
-      //   <Text
-      //     style={{
-      //       fontSize: 21,
-      //       color: '#8a7695',
-      //       fontFamily: 'AvenirLTStd-Book',
-      //     }}>
-      //     No Results Found
-      //   </Text>
-      // </View>
-      null}
+        filterData.length > 0 ? (
+          <Flatlists1 data={filterData} navigation={navigation} />
+        ) : (
+          <View style={{alignSelf: 'center'}}>
+            <Text
+              style={{
+                fontSize: 21,
+                color: '#8a7695',
+                fontFamily: 'AvenirLTStd-Book',
+              }}>
+              No Results Found
+            </Text>
+          </View>
+        )
+      ) : null}
     </SafeAreaView>
   );
 };
@@ -596,5 +622,28 @@ const styles = StyleSheet.create({
     fontSize: 17,
     justifyContent: 'center',
     lineHeight: 22,
+  },
+  nearMeView: {
+    color: '#000000',
+    fontFamily: 'AvenirLTStd-Book',
+    fontSize: 18,
+    alignSelf: 'center',
+    width: '100%',
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: 'white',
+    height: 87,
+    borderBottomWidth: 1,
+    justifyContent: 'center',
+    borderBottomColor: '#d4d4d4',
+  },
+  nearMeText: {
+    width: '60%',
+    textAlign: 'left',
+    lineHeight: 26,
+    color: 'black',
+    fontSize: 18,
+    fontFamily: 'AvenirLTStd-Book',
+    marginLeft: 30,
   },
 });

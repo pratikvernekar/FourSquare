@@ -36,9 +36,19 @@ const authenticateSlice = createSlice({
     setRatings: (state, action) => {
       state.ratings = !action.payload;
     },
+    setUserName: (state, action) => {
+      state.userData = action.payload;
+    },
   },
 });
 
-export const {login, logOut, setLatLong, setFavourite, setSkip, setRatings} =
-  authenticateSlice.actions;
+export const {
+  login,
+  logOut,
+  setLatLong,
+  setFavourite,
+  setSkip,
+  setRatings,
+  setUserName,
+} = authenticateSlice.actions;
 export default authenticateSlice.reducer;

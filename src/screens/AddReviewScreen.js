@@ -8,6 +8,7 @@ import {
   ScrollView,
   TextInput,
   Pressable,
+  TouchableOpacity,
 } from 'react-native';
 import React, {useRef, useState} from 'react';
 import ImagePicker from 'react-native-image-crop-picker';
@@ -31,7 +32,7 @@ const AddReviewScreen = ({navigation, route}) => {
         const response = await addReview(route.params, text, key);
         console.log(response);
         ref.current.clear();
-        setImageUri([])
+        setImageUri([]);
         Toast.show(response.message);
       } catch (error) {
         console.log(error);
@@ -52,11 +53,10 @@ const AddReviewScreen = ({navigation, route}) => {
           )}`,
         });
       }
-   const resp=await addReviewImage(payload,key)
-   console.log(resp);
+      const resp = await addReviewImage(payload, key);
+      console.log(resp);
     }
   };
-  console.log(route);
 
   const selectImg = () => {
     ImagePicker.openPicker({
@@ -83,8 +83,8 @@ const AddReviewScreen = ({navigation, route}) => {
         console.log(e);
       });
   };
-  console.log(route.params);
-  console.log('33', imageUri);
+  // console.log(route.params);
+  // console.log('33', text.length);
   return (
     <SafeAreaView style={{flex: 1, backgroundColor: 'white'}}>
       <View style={styles.header}>
@@ -122,28 +122,43 @@ const AddReviewScreen = ({navigation, route}) => {
             marginTop: 10,
             alignSelf: 'center',
             flexDirection: 'row',
+            flexWrap: 'wrap',
           }}>
           {imageUri.length > 0
             ? imageUri.map(e => {
                 return (
-                  <View style={styles.imgView}>
+                  <View style={styles.imgView} key={uuid.v4()}>
                     <Image source={{uri: e.path}} style={styles.imgImage} />
                   </View>
                 );
               })
             : null}
 
-          <Pressable onPress={selectImg}>
+          <TouchableOpacity
+            onPress={() => {
+              if (imageUri.length < 5) {
+                selectImg();
+              } else {
+                Toast.show('Only 5 images can be added');
+              }
+            }}>
             <View style={styles.addPickView}>
               <Image
                 source={require('../assets/images/Imgs/aad_photo_icon_big.png')}
                 style={styles.imgPick}
               />
             </View>
-          </Pressable>
+          </TouchableOpacity>
         </View>
       </ScrollView>
-      <Pressable onPress={revAdd}>
+      <Pressable
+        onPress={() => {
+          if (text.length > 0 && !(/^\s*$/.test(text))) {
+            revAdd();
+          } else {
+            Toast.show('Write a Review');
+          }
+        }}>
         <View style={styles.btn}>
           <Text style={styles.btnText}>Submit</Text>
         </View>

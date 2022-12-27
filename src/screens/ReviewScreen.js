@@ -11,10 +11,13 @@ import {
 import React, {useEffect, useState} from 'react';
 import {ReviewList} from '../components/Flatlists';
 import {getReview} from '../services/Places';
+import Toast from 'react-native-simple-toast';
+import { useSelector } from 'react-redux';
 
 const ReviewScreen = ({route, navigation}) => {
   const [loadingScreen, setLoadingScreen] = useState(false);
   const [reviewData, setReviewData] = useState([]);
+  const userData=useSelector(state=>state.auth)
   useEffect(() => {
     setTimeout(async () => {
       setLoadingScreen(true);
@@ -24,15 +27,6 @@ const ReviewScreen = ({route, navigation}) => {
       setLoadingScreen(false);
     }, 500);
   }, []);
-  if (loadingScreen) {
-    return (
-      <SafeAreaView
-        style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
-        <ActivityIndicator color="#351247" size="large" />
-      </SafeAreaView>
-    );
-  }
-  //console.log(route);
   return (
     <SafeAreaView style={styles.main}>
       <StatusBar backgroundColor="#310D20" />
@@ -45,14 +39,38 @@ const ReviewScreen = ({route, navigation}) => {
         </Pressable>
 
         <Text style={styles.headerText}>{route.params.placeName}</Text>
-        <Pressable onPress={()=>navigation.navigate('AddReview',route.params.id)}>
+        <Pressable
+          onPress={() => {
+            if (userData.userToken !== null) {
+              navigation.navigate('AddReview', route.params.id);
+            } else {
+              Toast.show('Please Login');
+            }
+          }}>
           <Image
             source={require('../assets/images/Imgs/add_review3.png')}
             style={styles.imgReview}
           />
         </Pressable>
       </View>
-      <ReviewList data={reviewData} />
+      {loadingScreen ? (
+        <ActivityIndicator color="#351247" size="large" />
+      ) : null}
+      {reviewData.length > 0 ? (
+        <ReviewList data={reviewData} />
+      ) : (
+        <View style={{width: '100%'}}>
+          <Text
+            style={{
+              color: '#351247',
+              fontSize: 22,
+              fontFamily: 'AvenirLTStd-Book',
+              alignSelf: 'center',
+            }}>
+            No Reviews
+          </Text>
+        </View>
+      )}
     </SafeAreaView>
   );
 };
@@ -82,7 +100,7 @@ const styles = StyleSheet.create({
   imgBack: {
     resizeMode: 'contain',
     height: 25,
-    width: 20,
+    width: 25,
   },
   imgReview: {
     resizeMode: 'contain',

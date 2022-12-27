@@ -146,8 +146,8 @@ const NearyouScreen = ({navigation}) => {
       {loadingList ? (
         <View
           style={{
-            marginTop: 50,
-            height: 100,
+            marginTop: 0,
+            height: 30,
 
             justifyContent: 'center',
           }}>

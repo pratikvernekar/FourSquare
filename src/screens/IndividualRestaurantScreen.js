@@ -133,44 +133,54 @@ const IndividualRestaurant = ({navigation, route}) => {
       </SafeAreaView>
     );
   }
-
   return (
     <SafeAreaView style={styles.main}>
       <ScrollView
         style={{flex: 1, width: '100%'}}
         showsHorizontalScrollIndicator={false}
         showsVerticalScrollIndicator={false}>
-        <ImageBackground
-          style={[styles.imageBackground, {height: imgHeight}]}
-          source={{uri: 'https' + particularPlace?.placeImage?.substring(4)}}>
-          <View style={styles.header}>
-            <TouchableOpacity onPressOut={() => navigation.goBack()}>
-              <Image
-                style={{height: 22, width: 22}}
-                source={require('../assets/images/back_icon.png')}
-              />
-            </TouchableOpacity>
-
-            <Text style={styles.headetText}>{particularPlace?.placeName}</Text>
-            <View style={styles.shareFavView}>
-              <TouchableOpacity onPress={share}>
+        {JSON.stringify(particularPlace) !== '{}' ? (
+          <ImageBackground
+            style={[styles.imageBackground, {height: imgHeight}]}
+            source={{uri: 'https' + particularPlace?.placeImage?.substring(4)}}>
+            <View style={styles.header}>
+              <TouchableOpacity onPressOut={() => navigation.goBack()}>
                 <Image
                   style={{height: 22, width: 22}}
-                  source={require('../assets/images/share_icon.png')}
+                  source={require('../assets/images/back_icon.png')}
                 />
               </TouchableOpacity>
 
-              {userData.userToken !== null ? (
-                userData.favourite.favouritePlaces?.length > 0 ? (
-                  userData.favourite.favouritePlaces.filter(
-                    e => e.placeId === route.params.id,
-                  ).length > 0 ? (
-                    <TouchableOpacity onPress={addFav}>
-                      <Image
-                        style={{height: 22, width: 22, resizeMode: 'contain'}}
-                        source={require('../assets/images/favourite_icon_selected.png')}
-                      />
-                    </TouchableOpacity>
+              <Text style={styles.headetText}>
+                {particularPlace?.placeName}
+              </Text>
+              <View style={styles.shareFavView}>
+                <TouchableOpacity onPress={share}>
+                  <Image
+                    style={{height: 22, width: 22}}
+                    source={require('../assets/images/share_icon.png')}
+                  />
+                </TouchableOpacity>
+
+                {userData.userToken !== null ? (
+                  userData.favourite.favouritePlaces?.length > 0 ? (
+                    userData.favourite.favouritePlaces.filter(
+                      e => e.placeId === route.params.id,
+                    ).length > 0 ? (
+                      <TouchableOpacity onPress={addFav}>
+                        <Image
+                          style={{height: 22, width: 22, resizeMode: 'contain'}}
+                          source={require('../assets/images/favourite_icon_selected.png')}
+                        />
+                      </TouchableOpacity>
+                    ) : (
+                      <TouchableOpacity onPress={addFav}>
+                        <Image
+                          style={{height: 22, width: 22, resizeMode: 'contain'}}
+                          source={require('../assets/images/favourite_icon.png')}
+                        />
+                      </TouchableOpacity>
+                    )
                   ) : (
                     <TouchableOpacity onPress={addFav}>
                       <Image
@@ -180,45 +190,45 @@ const IndividualRestaurant = ({navigation, route}) => {
                     </TouchableOpacity>
                   )
                 ) : (
-                  <TouchableOpacity onPress={addFav}>
+                  <TouchableOpacity onPress={() => Toast.show('Login First')}>
                     <Image
                       style={{height: 22, width: 22, resizeMode: 'contain'}}
                       source={require('../assets/images/favourite_icon.png')}
                     />
                   </TouchableOpacity>
-                )
-              ) : (
-                <TouchableOpacity onPress={() => Toast.show('Login First')}>
-                  <Image
-                    style={{height: 22, width: 22, resizeMode: 'contain'}}
-                    source={require('../assets/images/favourite_icon.png')}
-                  />
-                </TouchableOpacity>
-              )}
+                )}
+              </View>
             </View>
-          </View>
-          <View
-            style={{
-              marginTop: 140,
-              width: '85%',
-              alignSelf: 'center',
-            }}>
-            <Text style={styles.restroText}>{particularPlace?.category}</Text>
-          </View>
-          <View style={[styles.starView]}>
-            <AirbnbRating
-              count={5}
-              defaultRating={particularPlace?.rating}
-              size={14}
-              isDisabled={true}
-              showRating={false}
-            />
-          </View>
-        </ImageBackground>
+            <View
+              style={{
+                marginTop: 140,
+                width: '85%',
+                alignSelf: 'center',
+              }}>
+              <Text style={styles.restroText}>{particularPlace?.category}</Text>
+            </View>
+            <View style={[styles.starView]}>
+              <AirbnbRating
+                count={5}
+                defaultRating={particularPlace?.rating}
+                size={14}
+                isDisabled={true}
+                showRating={false}
+              />
+            </View>
+          </ImageBackground>
+        ) : null}
 
         <View style={styles.ratingPhotosView}>
           <View>
-            <Pressable onPress={() => setModal(true)}>
+            <Pressable
+              onPress={() => {
+                if (userData.userToken !== null) {
+                  setModal(true);
+                } else {
+                  Toast.show('Please Login');
+                }
+              }}>
               <Image
                 style={{height: 50, width: 50}}
                 source={require('../assets/images/rating_icon.png')}
@@ -363,7 +373,7 @@ const IndividualRestaurant = ({navigation, route}) => {
                     fontFamily: 'AvenirLTStd-Book',
                     marginTop: 20,
                   }}>
-                  {particularPlace.rating}
+                  {particularPlace?.rating?.toFixed(1)}
                 </Text>
                 <Text
                   style={{
@@ -400,7 +410,15 @@ const IndividualRestaurant = ({navigation, route}) => {
         </Modal>
       </ScrollView>
       <Pressable
-        onPress={() => navigation.navigate('AddReview', route.params.id)}
+        onPress={() => {
+          if (userData.userToken !== null) {
+            navigation.navigate('AddReview', route.params.id);
+          } else {
+            Toast.show('Please Login');
+          }
+
+          
+        }}
         style={{width: '100%'}}>
         <View style={styles.btn}>
           <Text style={styles.btnText}>Add Review</Text>

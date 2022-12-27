@@ -13,26 +13,39 @@ import {
   useWindowDimensions,
   Platform,
 } from 'react-native';
+import Toast from 'react-native-simple-toast';
 import MapView, {Marker} from 'react-native-maps';
-
+import uuid from 'react-native-uuid';
 import React, {useEffect, useRef, useState} from 'react';
 import {SearchInput} from '../components/TextInputs/textInputs';
-import {useSelector} from 'react-redux';
-import {getNearCity, searchPlaceWithOutFilter} from '../services/Places';
+import {useDispatch, useSelector} from 'react-redux';
+import {
+  addFavourite,
+  getNearCity,
+  getNearPlaces,
+  searchPlaceWithOutFilter,
+} from '../services/Places';
 import {Flatlists1, NearByPlaces} from '../components/Flatlists';
-import Buttons, {Button1} from '../components/Buttons/Buttons';
+import {Button1} from '../components/Buttons/Buttons';
+import {getVerifiedKeys} from '../Function';
+import {setSkip} from '../redux/AuthSlice';
 
 const SearchScreen = ({navigation}) => {
   const [text, setText] = useState('');
-  const mapRef = useRef(null);
   const authData = useSelector(state => state.auth);
   const [neatCity, setNearCity] = useState([]);
   const [nearBy, setNearBy] = useState(false);
   const [nearMe, setNearMe] = useState(false);
   const [loading, setLoading] = useState(false);
+
   const [searchedPlacesVisible, setSearchedPlacesVisible] = useState(false);
   const [searchedPlaces, setSearchedPlaces] = useState([]);
+  const [coords, setCoords] = useState([]);
   const [mapView, setMapView] = useState(false);
+  const [mapView2, setMapView2] = useState(false);
+  const [Viewable, SetViewable] = useState([]);
+  const ref = React.useRef(null);
+  const dispatch = useDispatch();
   useEffect(() => {
     setTimeout(async () => {
       setLoading(true);
@@ -42,6 +55,31 @@ const SearchScreen = ({navigation}) => {
     }, 500);
   }, []);
 
+  const onViewRef = React.useRef(viewableItems => {
+    let Check = [];
+    for (var i = 0; i < viewableItems.viewableItems.length; i++) {
+      Check.push(viewableItems.viewableItems[i].item);
+    }
+    SetViewable(Check);
+  });
+
+  const favAdd = async id => {
+    const key = await getVerifiedKeys(authData.userToken);
+    const response = await addFavourite(id, key);
+    Toast.show(response.message);
+    dispatch(setSkip(authData.skip));
+  };
+
+  const getNearYouPlaces = async coords => {
+    const resp = await searchPlaceWithOutFilter(
+      coords[0].latitude,
+      coords[0].longitude,
+      '',
+    );
+    setSearchedPlaces(resp);
+  };
+
+  const viewConfigRef = React.useRef({viewAreaCoveragePercentThreshold: 80});
   const {height, width} = useWindowDimensions();
   const width1 =
     width > height
@@ -59,11 +97,18 @@ const SearchScreen = ({navigation}) => {
       : Platform.OS === 'ios'
       ? 382
       : 377;
+  const h1 =
+    width > height
+      ? Platform.OS === 'ios'
+        ? '58%'
+        : '52%'
+      : Platform.OS === 'ios'
+      ? '82%'
+      : '78%';
   // console.log(authData);
   const renderItem = ({item}) => {
     return (
       <Pressable
-        //style={{borderWidth:1}}
         onPress={() =>
           navigation.navigate(
             'IndividualRestaurant',
@@ -82,13 +127,45 @@ const SearchScreen = ({navigation}) => {
           <View style={{flexDirection: 'column', width: width1}}>
             <View style={styles.searchTextContainer}>
               <Text style={styles.text1}>{item.placeName}</Text>
-              <Image
-                style={{height: 20, width: 20}}
-                source={require('../assets/images/favourite_iconcopy.png')}
-              />
+
+              {authData.userToken !== null ? (
+                authData?.favourite?.favouritePlaces?.length > 0 ? (
+                  authData?.favourite?.favouritePlaces?.filter(
+                    e => e.placeId === item._id,
+                  ).length > 0 ? (
+                    <TouchableOpacity onPress={() => favAdd(item._id)}>
+                      <Image
+                        style={{height: 20, width: 20}}
+                        source={require('../assets/images/favourite_icon_selected.png')}
+                      />
+                    </TouchableOpacity>
+                  ) : (
+                    <TouchableOpacity onPress={() => favAdd(item._id)}>
+                      <Image
+                        style={{height: 20, width: 20}}
+                        source={require('../assets/images/favourite_iconcopy.png')}
+                      />
+                    </TouchableOpacity>
+                  )
+                ) : (
+                  <TouchableOpacity onPress={() => favAdd(item._id)}>
+                    <Image
+                      style={{height: 20, width: 20}}
+                      source={require('../assets/images/favourite_iconcopy.png')}
+                    />
+                  </TouchableOpacity>
+                )
+              ) : (
+                <TouchableOpacity onPress={() => Toast.show('Login First')}>
+                  <Image
+                    style={{height: 20, width: 20}}
+                    source={require('../assets/images/favourite_iconcopy.png')}
+                  />
+                </TouchableOpacity>
+              )}
             </View>
             <View style={styles.batch}>
-              <Text style={{color: 'white'}}>{item.rating * 2}</Text>
+              <Text style={{color: 'white'}}>{item.rating.toFixed(1) * 2}</Text>
             </View>
             <Text style={styles.text2}>
               Indian •{' '}
@@ -165,12 +242,17 @@ const SearchScreen = ({navigation}) => {
                   setNearBy(true);
                   setNearMe(false);
                   setMapView(false);
+                  setMapView2(false);
+                }
+                if (txt.length === 1) {
+                  setSearchedPlacesVisible(false);
                 }
               }}
               onFocus={txt => {
                 setSearchedPlacesVisible(false);
                 setNearBy(true);
                 setNearMe(false);
+                setMapView2(false);
                 if (txt.length === 0) {
                   setSearchedPlacesVisible(false);
                 }
@@ -186,10 +268,11 @@ const SearchScreen = ({navigation}) => {
                 setNearMe(true);
                 setSearchedPlacesVisible(false);
                 setMapView(false);
+                setMapView2(false);
               }}
             />
           </View>
-          <Pressable onPress={() => navigation.goBack()}>
+          <Pressable onPress={() => navigation.navigate('Filter')}>
             <Image
               source={require('../assets/images/filter_icon.png')}
               style={styles.imgFilter}
@@ -198,7 +281,6 @@ const SearchScreen = ({navigation}) => {
         </View>
       </View>
 
-      {/* <View style={styles.container}> */}
       {nearBy ? (
         <ScrollView>
           <View>
@@ -238,48 +320,61 @@ const SearchScreen = ({navigation}) => {
               />
               <Text style={styles.nearMeText}>Use my current location</Text>
             </View>
-            <View style={styles.nearMeView}>
-              <Image
-                source={require('../assets/images/map_icon.png')}
-                style={styles.imgFilter}
-              />
-              <Text style={styles.nearMeText}>Select Search area from map</Text>
-            </View>
+            <TouchableOpacity
+              onPress={() => {
+                setMapView2(true);
+                setNearBy(false);
+                setNearMe(false);
+                setSearchedPlacesVisible(false);
+                setMapView(false);
+              }}>
+              <View style={styles.nearMeView}>
+                <Image
+                  source={require('../assets/images/map_icon.png')}
+                  style={styles.imgFilter}
+                />
+                <Text style={styles.nearMeText}>
+                  Select Search area from map
+                </Text>
+              </View>
+            </TouchableOpacity>
           </ScrollView>
         </>
       ) : null}
-      {/* </View> */}
 
       {searchedPlacesVisible ? (
         searchedPlaces?.length > 0 ? (
+          <>
+            <View
+              style={{
+                backgroundColor: '#f2f1f1',
+                height: h1,
+              }}>
+              <Flatlists1 data={searchedPlaces} navigation={navigation} />
+            </View>
+            <View style={{position: 'absolute', bottom: 0, left: 0, right: 0}}>
+              <Button1
+                title="Map View"
+                onPress={() => {
+                  setSearchedPlacesVisible(false);
+                  setMapView(true);
+                }}
+              />
+            </View>
+          </>
+        ) : (
           <View
-            style={{backgroundColor: '#f2f1f1', borderWidth: 0, height: '86%'}}>
-            <Flatlists1 data={searchedPlaces} navigation={navigation} />
-            <Button1
-              title="Map View"
-              onPress={() => {
-                setMapView(true);
-                setSearchedPlaces(false);
-                // try {
-                //   setTimeout(() => {
-                //     mapRef.current.animateToRegion(
-                //       {
-                //         latitude: authData.latitude,
-                //         longitude: authData.longitude,
-                //         latitudeDelta: 0.1,
-                //         longitudeDelta: 0.1,
-                //       },
-                //       3 * 1000,
-                //     );
-                //     setMapView(true);
-                //   }, 500);
-                // } catch (er) {
-                //   console.log('hello');
-                // }
-              }}
-            />
+            style={{flex: 1, alignItems: 'center', justifyContent: 'center'}}>
+            <Text
+              style={{
+                fontSize: 22,
+                color: '#370f24',
+                fontFamily: 'AvenirLTStd-Book',
+              }}>
+              No Results
+            </Text>
           </View>
-        ) : null
+        )
       ) : null}
       {mapView && searchedPlaces?.length > 0 ? (
         <View style={styles.mapContainer}>
@@ -291,58 +386,113 @@ const SearchScreen = ({navigation}) => {
               longitude: authData.longitude,
               latitudeDelta: 0.7,
               longitudeDelta: 0.7,
-            }}
-            ref={mapRef}>
-            {searchedPlaces.map(ele => {
-              return (
-                <Marker
-                  key={ele._id}
-                  draggable
-                  coordinate={{
-                    latitude: ele?.location?.coordinates[1],
-                    longitude: ele?.location?.coordinates[0],
-                    latitudeDelta: 0.2,
-                    longitudeDelta: 0.2,
-                  }}
-                  onDragEnd={e =>
-                    alert(JSON.stringify(e.nativeEvent.coordinate))
-                  }
-                  title={ele.placeName}
-                />
-              );
-            })}
+            }}>
+            {Viewable.length > 0 &&
+              searchedPlaces.map(ele => {
+                return ele._id === Viewable[0]._id ? (
+                  <Marker
+                    key={ele._id}
+                    draggable
+                    coordinate={{
+                      latitude: ele?.location?.coordinates[1],
+                      longitude: ele?.location?.coordinates[0],
+                      latitudeDelta: 0.2,
+                      longitudeDelta: 0.2,
+                    }}
+                    onDragEnd={e =>
+                      alert(JSON.stringify(e.nativeEvent.coordinate))
+                    }
+                    title={ele.placeName}
+                    pinColor="green"
+                  />
+                ) : (
+                  <Marker
+                    key={ele._id}
+                    draggable
+                    coordinate={{
+                      latitude: ele?.location?.coordinates[1],
+                      longitude: ele?.location?.coordinates[0],
+                      latitudeDelta: 0.2,
+                      longitudeDelta: 0.2,
+                    }}
+                    onDragEnd={e =>
+                      alert(JSON.stringify(e.nativeEvent.coordinate))
+                    }
+                    title={ele.placeName}
+                  />
+                );
+              })}
           </MapView>
           <View
             style={{
               height: 150,
               width: '100%',
-              // position: 'absolute',bottom:510,
             }}>
             <FlatList
               keyExtractor={item => item._id}
               pagingEnabled
               data={searchedPlaces}
               renderItem={renderItem}
-              horizontal={true}
+              horizontal
               showsHorizontalScrollIndicator={false}
               showsVerticalScrollIndicator={false}
+              ref={ref}
+              onViewableItemsChanged={onViewRef.current}
+              viewabilityConfig={viewConfigRef.current}
             />
-            {/* <Flatlists1
-              data={searchedPlaces}
-              navigation={navigation}
-              horizontal={true}
-            /> */}
           </View>
 
           <View style={{position: 'absolute', bottom: 0, left: 0, right: 0}}>
             <Button1
               title="List View"
               onPress={() => {
-                setSearchedPlaces(true);
                 setMapView(false);
+                setSearchedPlacesVisible(true);
               }}
             />
           </View>
+        </View>
+      ) : null}
+
+      {mapView2 ? (
+        <View style={{flex: 1}}>
+          <MapView
+            onPress={e => {
+              setCoords([e.nativeEvent.coordinate]);
+              getNearYouPlaces([e.nativeEvent.coordinate]);
+              setTimeout(() => {
+                setMapView2(false);
+                setSearchedPlacesVisible(true);
+              }, 1500);
+            }}
+            style={styles.mapStyle}
+            customMapStyle={mapStyle}
+            initialRegion={{
+              latitude: authData.latitude,
+              longitude: authData.longitude,
+              latitudeDelta: 0.08,
+              longitudeDelta: 0.08,
+            }}>
+            {coords.length > 0 &&
+              coords.map(ele => {
+                return (
+                  <Marker
+                    key={uuid.v4()}
+                    draggable
+                    coordinate={{
+                      latitude: ele?.latitude,
+                      longitude: ele?.longitude,
+                      latitudeDelta: 0.2,
+                      longitudeDelta: 0.2,
+                    }}
+                    onDragEnd={e =>
+                      alert(JSON.stringify(e.nativeEvent.coordinate))
+                    }
+                    title={ele.placeName}
+                  />
+                );
+              })}
+          </MapView>
         </View>
       ) : null}
     </SafeAreaView>

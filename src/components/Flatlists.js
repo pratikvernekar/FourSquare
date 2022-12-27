@@ -101,7 +101,7 @@ const Flatlists1 = ({navigation, data, horizontal}) => {
             )}
           </View>
           <View style={styles.batch}>
-            <Text style={{color: 'white'}}>{item.rating * 2}</Text>
+            <Text style={{color: 'white'}}>{item.rating.toFixed(1) * 2}</Text>
           </View>
           <Text style={styles.text2}>
             Indian •{' '}
@@ -138,7 +138,7 @@ const Flatlists1 = ({navigation, data, horizontal}) => {
   );
 };
 const FavouriteList = ({navigation, data, del, setDel}) => {
-  const dispatch=useDispatch()
+  const dispatch = useDispatch();
   const {height, width} = useWindowDimensions();
   const h1 =
     width > height
@@ -157,7 +157,6 @@ const FavouriteList = ({navigation, data, del, setDel}) => {
       ? '66%'
       : '66%';
   const userData = useSelector(state => state.auth);
-
 
   const renderItem = ({item}) => (
     <Pressable
@@ -183,11 +182,9 @@ const FavouriteList = ({navigation, data, del, setDel}) => {
             <Text style={styles.text1}>{item.placeName}</Text>
             <TouchableOpacity
               onPress={async () => {
-                
                 const key = await getVerifiedKeys(userData.userToken);
                 const response = await addFavourite(item.placeId, key);
-                dispatch(setSkip(userData.skip))
-             
+                dispatch(setSkip(userData.skip));
               }}>
               <Image
                 style={{height: 16, width: 16}}
@@ -196,7 +193,9 @@ const FavouriteList = ({navigation, data, del, setDel}) => {
             </TouchableOpacity>
           </View>
           <View style={styles.batch}>
-            <Text style={{color: 'white'}}>{item.placeRating * 2}</Text>
+            <Text style={{color: 'white'}}>
+              {item?.placeRating?.toFixed(1) * 2}
+            </Text>
           </View>
           <Text style={styles.text2}>
             Indian •{' '}
@@ -235,6 +234,8 @@ const FavouriteList = ({navigation, data, del, setDel}) => {
 };
 
 const ReviewList = ({data}) => {
+  const userData = useSelector(state => state.auth);
+
   const renderItem = ({item}) => (
     <TouchableOpacity onPress={() => console.log('d')}>
       <View style={styles.mainReview}>
@@ -248,18 +249,22 @@ const ReviewList = ({data}) => {
           }}
           source={{uri: 'https' + item.reviewerImage.substring(4)}}
         />
-
         <View
           style={{
             borderWidth: 0,
             width: '86%',
             height: 80,
             alignSelf: 'center',
-
             paddingHorizontal: 10,
           }}>
           <View style={styles.textContainer}>
-            <Text style={styles.text1}>{item.reviewBy}</Text>
+            <Text style={styles.text1}>
+              {item.reviewBy === userData.userData
+                ? 'You'
+                : item.reviewBy.length > 16
+                ? item.reviewBy.substring(0, 13) + '...'
+                : item.reviewBy}
+            </Text>
             <Text style={styles.text2}>
               {moment(new Date(item.reviewDate.toString()))
                 .format('MMMM DD,YYYY')

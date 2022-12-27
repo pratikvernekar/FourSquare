@@ -15,7 +15,6 @@ import {searchFavourite} from '../services/Places';
 import {useDispatch, useSelector} from 'react-redux';
 import {getVerifiedKeys} from '../Function';
 import {FavouriteList} from '../components/Flatlists';
-import {setSkip} from '../redux/AuthSlice';
 
 const FavouriteScreen = ({navigation}) => {
   const {height, width} = useWindowDimensions();
@@ -47,8 +46,6 @@ const FavouriteScreen = ({navigation}) => {
       setLoading(false);
     }, 500);
   }, [text, userData.skip]);
-  // useEffect(() => {}, [del]);
-  // console.log(del);
 
   return (
     <SafeAreaView styles={styles.main}>
@@ -98,7 +95,7 @@ const FavouriteScreen = ({navigation}) => {
           <ActivityIndicator
             size={'large'}
             color="#370f24"
-            style={{marginTop: 100}}
+            style={{marginTop: 10}}
           />
         </View>
       ) : null}
@@ -106,7 +103,6 @@ const FavouriteScreen = ({navigation}) => {
         style={{
           height: h1,
           backgroundColor: 'white',
-         
           marginBottom: 20,
         }}>
         {favData.length > 0 ? (

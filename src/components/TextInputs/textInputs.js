@@ -94,6 +94,7 @@ export const SearchInput = props => {
         }}
         onFocus={props.onFocus}
         onChangeText={props.onChangeText}
+        
       />
     </View>
   );

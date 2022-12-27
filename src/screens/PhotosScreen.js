@@ -7,14 +7,27 @@ import {
   Image,
   TouchableOpacity,
   ActivityIndicator,
+  useWindowDimensions,
+  Platform,
 } from 'react-native';
 import React, {useEffect, useState} from 'react';
 import {getReview, getReviewImage} from '../services/Places';
 import {getVerifiedKeys} from '../Function';
 import {useSelector} from 'react-redux';
 import uuid from 'react-native-uuid';
+import Toast from 'react-native-simple-toast';
+import {ScrollView} from 'react-native-gesture-handler';
 
 const PhotosScreen = ({navigation, route}) => {
+  const {height, width} = useWindowDimensions();
+  const h1 =
+    width > height
+      ? Platform.OS === 'ios'
+        ? '90%'
+        : '80%'
+      : Platform.OS === 'ios'
+      ? '90%'
+      : '91%';
   const userData = useSelector(state => state.auth);
   const [images, setImages] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -40,64 +53,76 @@ const PhotosScreen = ({navigation, route}) => {
 
         <Text style={styles.headerText}>{route.params.name}</Text>
 
-        <TouchableOpacity onPress={() => navigation.navigate('AddReview')}>
+        <TouchableOpacity
+          onPress={() => {
+            if (userData.userToken !== null) {
+              navigation.navigate('AddReview', route.params.id);
+            } else {
+              Toast.show('Please Login');
+            }
+          }}>
           <Image
             source={require('../assets/images/Imgs/aad_photo_icon.png')}
             style={styles.imgSearch}
           />
         </TouchableOpacity>
       </View>
-      {loading ? <ActivityIndicator size={20} /> : null}
-      <View style={styles.imgContainer} key={uuid.v4()}>
-        {images ? (
-          //  <View style={styles.imgContainer} key={uuid.v4()}>
-          images.map(e => {
-            return (
-              <View style={styles.imgContainer} key={uuid.v4()}>
-                {e.image.map(ele => {
-                  return (
-                    <Pressable
+      {loading ? <ActivityIndicator size={40} color="#370f24" /> : null}
+
+      <ScrollView
+        showsHorizontalScrollIndicator={false}
+        showsVerticalScrollIndicator={false}
+        style={[{borderWidth: 1, height: h1}]}>
+        <View style={styles.imgContainer} key={uuid.v4()}>
+          {images.length > 0 ? (
+            images.map(e => {
+              return e.image.map(ele => {
+                return (
+                  <Pressable
+                    key={uuid.v4()}
+                    onPress={() =>
+                      navigation.navigate(
+                        'IndividualPhoto',
+                        (obj = {
+                          rName: e.reviewBy,
+                          rDate: e.reviewDate,
+                          rImage: e.reviewerImage,
+                          image: ele,
+                        }),
+                      )
+                    }>
+                    <Image
                       key={uuid.v4()}
-                      onPress={() =>
-                        navigation.navigate(
-                          'IndividualPhoto',
-                          (obj = {
-                            rName: e.reviewBy,
-                            rDate: e.reviewDate,
-                            rImage: e.reviewerImage,
-                            image: ele,
-                          }),
-                        )
-                      }>
-                      <Image
-                        key={uuid.v4()}
-                        source={{uri: 'https' + ele.substring(4)}}
-                        style={{
-                          height: 120,
-                          width: 120,
-                          marginHorizontal: 2,
-                          marginTop: 2,
-                        }}
-                      />
-                    </Pressable>
-                  );
-                })}
-              </View>
-            );
-          })
-        ) : (
-          <View>
-            <Text
+                      source={{uri: 'https' + ele.substring(4)}}
+                      style={{
+                        height: 120,
+                        width: 120,
+                        marginHorizontal: 2,
+                        marginTop: 2,
+                      }}
+                    />
+                  </Pressable>
+                );
+              });
+            })
+          ) : (
+            <View
               style={{
-                fontSize: 17,
-                color: 'black',
-                fontFamily: 'AvenirLTStd-Book',
+                alignItems: 'center',
+                width: '100%',
               }}>
-              No Images
-            </Text>
-          </View>
-        )}
-      </View>
+              <Text
+                style={{
+                  fontSize: 20,
+                  color: 'black',
+                  fontFamily: 'AvenirLTStd-Book',
+                }}>
+                No Images
+              </Text>
+            </View>
+          )}
+        </View>
+      </ScrollView>
     </SafeAreaView>
   );
 };
@@ -107,12 +132,13 @@ export default PhotosScreen;
 const styles = StyleSheet.create({
   main: {
     flex: 1,
-    backgroundColor: '#000000',
+    backgroundColor: 'red',
+    borderWidth: 4,
+    height: 600,
   },
   header: {
     width: '100%',
     height: 70,
-
     backgroundColor: '#370f24',
     flexDirection: 'row',
     alignItems: 'center',
@@ -148,6 +174,6 @@ const styles = StyleSheet.create({
     justifyContent: 'flex-start',
     marginTop: 1,
     alignSelf: 'center',
-   
+    // backgroundColor: 'red',
   },
 });
