@@ -1,5 +1,5 @@
 import {NavigationContainer} from '@react-navigation/native';
-import React from 'react';
+import React, {useEffect} from 'react';
 import {Provider} from 'react-redux';
 import store from './src/redux/store';
 import {persistStore} from 'redux-persist';
@@ -18,20 +18,22 @@ import FavouriteScreen from './src/screens/FavouriteScreen';
 import SearchScreen from './src/screens/SearchScreen';
 import OtpScreen from './src/screens/OtpScreen';
 import ResetPassword from './src/screens/ResetPasswordScreen';
+import SplashScreen from 'react-native-splash-screen';
 
 let persistor = persistStore(store);
 
 const App = () => {
+  useEffect(() => {
+    SplashScreen.hide();
+  }, []);
   return (
-    
-      <Provider store={store}>
-        <PersistGate persistor={persistor}>
-          <NavigationContainer>
-            <NavigationFunctionality />
-          </NavigationContainer>
-        </PersistGate>
-      </Provider>
-    
+    <Provider store={store}>
+      <PersistGate persistor={persistor}>
+        <NavigationContainer>
+          <NavigationFunctionality />
+        </NavigationContainer>
+      </PersistGate>
+    </Provider>
   );
 };
 

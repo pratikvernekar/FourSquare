@@ -137,7 +137,7 @@ const Flatlists1 = ({navigation, data, horizontal}) => {
     />
   );
 };
-const FavouriteList = ({navigation, data, del, setDel}) => {
+const FavouriteList = ({navigation, data,}) => {
   const dispatch = useDispatch();
   const {height, width} = useWindowDimensions();
   const h1 =
