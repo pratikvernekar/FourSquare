@@ -9,8 +9,9 @@ import {
   Platform,
   ScrollView,
   Pressable,
+  RefreshControl,
 } from 'react-native';
-import React, {useEffect} from 'react';
+import React, {useEffect, useState} from 'react';
 import {addFavourite} from '../services/Places';
 import {useDispatch, useSelector} from 'react-redux';
 import {getVerifiedKeys} from '../Function';
@@ -244,49 +245,55 @@ const FavouriteList = ({navigation, data}) => {
   );
 };
 
-const ReviewList = ({data}) => {
+const ReviewList = ({data, refreshControl}) => {
   const userData = useSelector(state => state.auth);
+  // const [refreshing, setRefreshing] = useState(false);
+
+  // const onRefresh = async () => {
+  //   setRefreshing(true);
+  //   const response = await getReviewImage(route.params.id);
+  //   setImages(response.reviewImage);
+  //   setRefreshing(false);
+  // };
 
   const renderItem = ({item}) => (
-    <TouchableOpacity onPress={() => console.log('d')}>
-      <View style={styles.mainReview}>
-        <Image
-          style={{
-            height: 50,
-            width: 50,
-            borderRadius: 50,
-            marginTop: 15,
-            marginLeft: 18,
-          }}
-          source={{uri: 'https' + item.reviewerImage.substring(4)}}
-        />
-        <View
-          style={{
-            borderWidth: 0,
-            width: '86%',
-            height: 80,
-            alignSelf: 'center',
-            paddingHorizontal: 10,
-          }}>
-          <View style={styles.textContainer}>
-            <Text style={styles.text1}>
-              {item.reviewBy === userData.userData
-                ? 'You'
-                : item.reviewBy.length > 16
-                ? item.reviewBy.substring(0, 13) + '...'
-                : item.reviewBy}
-            </Text>
-            <Text style={styles.text2}>
-              {moment(new Date(item.reviewDate.toString()))
-                .format('MMMM DD,YYYY')
-                .toString()}
-            </Text>
-          </View>
-
-          <Text style={styles.text3}>{item.review}</Text>
+    <View style={styles.mainReview}>
+      <Image
+        style={{
+          height: 50,
+          width: 50,
+          borderRadius: 50,
+          marginTop: 15,
+          marginLeft: 18,
+        }}
+        source={{uri: 'https' + item.reviewerImage.substring(4)}}
+      />
+      <View
+        style={{
+          borderWidth: 0,
+          width: '86%',
+          height: 80,
+          alignSelf: 'center',
+          paddingHorizontal: 10,
+        }}>
+        <View style={styles.textContainer}>
+          <Text style={styles.text1}>
+            {item.reviewBy === userData.userData
+              ? 'You'
+              : item.reviewBy.length > 16
+              ? item.reviewBy.substring(0, 13) + '...'
+              : item.reviewBy}
+          </Text>
+          <Text style={styles.text2}>
+            {moment(new Date(item.reviewDate.toString()))
+              .format('MMMM DD,YYYY')
+              .toString()}
+          </Text>
         </View>
+
+        <Text style={styles.text3}>{item.review}</Text>
       </View>
-    </TouchableOpacity>
+    </View>
   );
   return (
     <FlatList
@@ -295,6 +302,7 @@ const ReviewList = ({data}) => {
       keyExtractor={item => item.reviewerId}
       showsHorizontalScrollIndicator={false}
       showsVerticalScrollIndicator={false}
+      refreshControl={refreshControl}
     />
   );
 };

@@ -168,10 +168,10 @@ const styles = StyleSheet.create({
   },
   inputView: {
     width: '90%',
-    marginVertical: 4,
+    marginVertical: 5,
     alignItems: 'center',
     alignSelf: 'center',
-    //borderWidth:1
+  
   },
 
   btn: {

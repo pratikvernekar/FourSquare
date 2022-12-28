@@ -6,27 +6,34 @@ import {
   StatusBar,
   Image,
   Pressable,
-  ActivityIndicator,
+  ActivityIndicator,RefreshControl
 } from 'react-native';
 import React, {useEffect, useState} from 'react';
 import {ReviewList} from '../components/Flatlists';
 import {getReview} from '../services/Places';
 import Toast from 'react-native-simple-toast';
-import { useSelector } from 'react-redux';
+import {useSelector} from 'react-redux';
 
 const ReviewScreen = ({route, navigation}) => {
   const [loadingScreen, setLoadingScreen] = useState(false);
   const [reviewData, setReviewData] = useState([]);
-  const userData=useSelector(state=>state.auth)
+  const [refreshing, setRefreshing] = useState(false);
+  const userData = useSelector(state => state.auth);
   useEffect(() => {
     setTimeout(async () => {
       setLoadingScreen(true);
       const response = await getReview(route.params.id);
-
       setReviewData(response.reviewText);
       setLoadingScreen(false);
     }, 500);
   }, []);
+
+  const onRefresh = async () => {
+    setRefreshing(true);
+    const response = await getReview(route.params.id);
+    setReviewData(response.reviewText);
+    setRefreshing(false);
+  };
   return (
     <SafeAreaView style={styles.main}>
       <StatusBar backgroundColor="#310D20" />
@@ -57,7 +64,12 @@ const ReviewScreen = ({route, navigation}) => {
         <ActivityIndicator color="#351247" size="large" />
       ) : null}
       {reviewData.length > 0 ? (
-        <ReviewList data={reviewData} />
+        <ReviewList
+          data={reviewData}
+          refreshControl={
+            <RefreshControl colors={['#4285F4','#DB4437','#F4B400','#0F9D58']}  refreshing={refreshing} onRefresh={onRefresh} />
+          }
+        />
       ) : (
         <View style={{width: '100%'}}>
           <Text

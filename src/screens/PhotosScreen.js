@@ -18,6 +18,7 @@ import {useSelector} from 'react-redux';
 import uuid from 'react-native-uuid';
 import Toast from 'react-native-simple-toast';
 import ImagePicker from 'react-native-image-crop-picker';
+import {RefreshControl} from 'react-native-gesture-handler';
 
 const PhotosScreen = ({navigation, route}) => {
   const {height, width} = useWindowDimensions();
@@ -33,16 +34,23 @@ const PhotosScreen = ({navigation, route}) => {
   const [images, setImages] = useState([]);
   const [loading, setLoading] = useState(false);
   const [img, setImg] = useState(false);
-  console.log(route);
+  const [refreshing, setRefreshing] = useState(false);
+
   useEffect(() => {
     setTimeout(async () => {
       setLoading(true);
       const response = await getReviewImage(route.params.id);
-      console.log(response);
       setImages(response.reviewImage);
       setLoading(false);
     }, 500);
   }, [img]);
+
+  const onRefresh = async () => {
+    setRefreshing(true);
+    const response = await getReviewImage(route.params.id);
+    setImages(response.reviewImage);
+    setRefreshing(false);
+  };
 
   const selectImg = async () => {
     ImagePicker.openPicker({
@@ -61,13 +69,12 @@ const PhotosScreen = ({navigation, route}) => {
           )}`,
         });
         let cred = await getVerifiedKeys(userData.userToken);
-       const res= await addReviewImage(payload, cred);
-       console.log(res);
-      setImg(!img);
+        const res = await addReviewImage(payload, cred);
+        console.log(res);
+        setImg(!img);
       })
       .catch(er => console.log('User cancelled selection'));
   };
-  console.log('dd',route);
   return (
     <SafeAreaView styles={styles.main}>
       <View style={styles.header}>
@@ -83,7 +90,7 @@ const PhotosScreen = ({navigation, route}) => {
         <TouchableOpacity
           onPress={() => {
             if (userData.userToken !== null) {
-              selectImg()
+              selectImg();
             } else {
               Toast.show('Please Login');
             }
@@ -97,6 +104,9 @@ const PhotosScreen = ({navigation, route}) => {
       {loading ? <ActivityIndicator size={40} color="#370f24" /> : null}
 
       <ScrollView
+        refreshControl={
+          <RefreshControl colors={['#4285F4','#DB4437','#F4B400','#0F9D58']} refreshing={refreshing} onRefresh={onRefresh} />
+        }
         showsHorizontalScrollIndicator={false}
         showsVerticalScrollIndicator={false}
         style={[{height: h1}]}>
