@@ -92,7 +92,6 @@ const IndividualRestaurant = ({navigation, route}) => {
     var response = await addRating(route.params.id, rate, key);
     dispatch(setRatings(userData.ratings));
     Toast.show(response.message);
-
     setTimeout(() => {
       setModal(false);
     }, 1500);
@@ -108,7 +107,7 @@ const IndividualRestaurant = ({navigation, route}) => {
       console.log('eee');
     }
   };
-  // console.log(userData.favourite);
+  
   const share = async () => {
     shareOptions = {
       url: 'https' + particularPlace?.placeImage?.substring(4),
@@ -211,7 +210,7 @@ const IndividualRestaurant = ({navigation, route}) => {
               <AirbnbRating
                 count={5}
                 defaultRating={particularPlace?.rating}
-                size={14}
+                size={17}
                 isDisabled={true}
                 showRating={false}
               />
@@ -315,7 +314,7 @@ const IndividualRestaurant = ({navigation, route}) => {
               <LinearGradient
                 start={{x: 0, y: 1}}
                 end={{x: 1, y: 1}}
-                locations={[0.1, 0.5]}
+                locations={[0.3, 0.6]}
                 colors={['rgba(249, 245, 238 ,1)', 'rgba(249, 245, 238,0)']}
                 style={{
                   height: Platform.OS === 'ios' ? 170 : 180,
@@ -502,9 +501,10 @@ const styles = StyleSheet.create({
   mapStyle: {
     position: 'absolute',
     top: 0,
-    left: 0,
+   // left: 0,
     right: 0,
     bottom: 0,
+    width:'70%'
   },
   mapView: {
     backgroundColor: 'white',
@@ -521,6 +521,7 @@ const styles = StyleSheet.create({
     marginTop: 16.4,
     justifyContent: 'center',
     position: 'relative',
+  
   },
 
   btn: {
@@ -592,82 +593,217 @@ const styles = StyleSheet.create({
 });
 
 const mapStyle = [
-  {elementType: 'geometry', stylers: [{color: '#242f3e'}]},
-  {elementType: 'labels.text.fill', stylers: [{color: '#746855'}]},
-  {elementType: 'labels.text.stroke', stylers: [{color: '#242f3e'}]},
   {
-    featureType: 'administrative.locality',
+    elementType: 'geometry',
+    stylers: [
+      {
+        color: '#ebe3cd',
+      },
+    ],
+  },
+  {
     elementType: 'labels.text.fill',
-    stylers: [{color: '#d59563'}],
+    stylers: [
+      {
+        color: '#523735',
+      },
+    ],
+  },
+  {
+    elementType: 'labels.text.stroke',
+    stylers: [
+      {
+        color: '#f5f1e6',
+      },
+    ],
+  },
+  {
+    featureType: 'administrative',
+    elementType: 'geometry.stroke',
+    stylers: [
+      {
+        color: '#c9b2a6',
+      },
+    ],
+  },
+  {
+    featureType: 'administrative.land_parcel',
+    elementType: 'geometry.stroke',
+    stylers: [
+      {
+        color: '#dcd2be',
+      },
+    ],
+  },
+  {
+    featureType: 'administrative.land_parcel',
+    elementType: 'labels.text.fill',
+    stylers: [
+      {
+        color: '#ae9e90',
+      },
+    ],
+  },
+  {
+    featureType: 'landscape.natural',
+    elementType: 'geometry',
+    stylers: [
+      {
+        color: '#dfd2ae',
+      },
+    ],
+  },
+  {
+    featureType: 'poi',
+    elementType: 'geometry',
+    stylers: [
+      {
+        color: '#dfd2ae',
+      },
+    ],
   },
   {
     featureType: 'poi',
     elementType: 'labels.text.fill',
-    stylers: [{color: '#d59563'}],
+    stylers: [
+      {
+        color: '#93817c',
+      },
+    ],
   },
   {
     featureType: 'poi.park',
-    elementType: 'geometry',
-    stylers: [{color: '#263c3f'}],
+    elementType: 'geometry.fill',
+    stylers: [
+      {
+        color: '#a5b076',
+      },
+    ],
   },
   {
     featureType: 'poi.park',
     elementType: 'labels.text.fill',
-    stylers: [{color: '#6b9a76'}],
+    stylers: [
+      {
+        color: '#447530',
+      },
+    ],
   },
   {
     featureType: 'road',
     elementType: 'geometry',
-    stylers: [{color: '#38414e'}],
+    stylers: [
+      {
+        color: '#f5f1e6',
+      },
+    ],
   },
   {
-    featureType: 'road',
+    featureType: 'road.arterial',
+    elementType: 'geometry',
+    stylers: [
+      {
+        color: '#fdfcf8',
+      },
+    ],
+  },
+  {
+    featureType: 'road.highway',
+    elementType: 'geometry',
+    stylers: [
+      {
+        color: '#f8c967',
+      },
+    ],
+  },
+  {
+    featureType: 'road.highway',
     elementType: 'geometry.stroke',
-    stylers: [{color: '#212a37'}],
+    stylers: [
+      {
+        color: '#e9bc62',
+      },
+    ],
   },
   {
-    featureType: 'road',
-    elementType: 'labels.text.fill',
-    stylers: [{color: '#9ca5b3'}],
-  },
-  {
-    featureType: 'road.highway',
+    featureType: 'road.highway.controlled_access',
     elementType: 'geometry',
-    stylers: [{color: '#746855'}],
+    stylers: [
+      {
+        color: '#e98d58',
+      },
+    ],
   },
   {
-    featureType: 'road.highway',
+    featureType: 'road.highway.controlled_access',
     elementType: 'geometry.stroke',
-    stylers: [{color: '#1f2835'}],
+    stylers: [
+      {
+        color: '#db8555',
+      },
+    ],
   },
   {
-    featureType: 'road.highway',
+    featureType: 'road.local',
     elementType: 'labels.text.fill',
-    stylers: [{color: '#f3d19c'}],
+    stylers: [
+      {
+        color: '#806b63',
+      },
+    ],
   },
   {
-    featureType: 'transit',
+    featureType: 'transit.line',
     elementType: 'geometry',
-    stylers: [{color: '#2f3948'}],
+    stylers: [
+      {
+        color: '#dfd2ae',
+      },
+    ],
+  },
+  {
+    featureType: 'transit.line',
+    elementType: 'labels.text.fill',
+    stylers: [
+      {
+        color: '#8f7d77',
+      },
+    ],
+  },
+  {
+    featureType: 'transit.line',
+    elementType: 'labels.text.stroke',
+    stylers: [
+      {
+        color: '#ebe3cd',
+      },
+    ],
   },
   {
     featureType: 'transit.station',
-    elementType: 'labels.text.fill',
-    stylers: [{color: '#d59563'}],
-  },
-  {
-    featureType: 'water',
     elementType: 'geometry',
-    stylers: [{color: '#17263c'}],
+    stylers: [
+      {
+        color: '#dfd2ae',
+      },
+    ],
+  },
+  {
+    featureType: 'water',
+    elementType: 'geometry.fill',
+    stylers: [
+      {
+        color: '#b9d3c2',
+      },
+    ],
   },
   {
     featureType: 'water',
     elementType: 'labels.text.fill',
-    stylers: [{color: '#515c6d'}],
-  },
-  {
-    featureType: 'water',
-    elementType: 'labels.text.stroke',
-    stylers: [{color: '#17263c'}],
+    stylers: [
+      {
+        color: '#92998d',
+      },
+    ],
   },
 ];

@@ -9,14 +9,15 @@ import {
   ActivityIndicator,
   useWindowDimensions,
   Platform,
+  ScrollView,
 } from 'react-native';
 import React, {useEffect, useState} from 'react';
-import {getReview, getReviewImage} from '../services/Places';
+import {addReviewImage, getReview, getReviewImage} from '../services/Places';
 import {getVerifiedKeys} from '../Function';
 import {useSelector} from 'react-redux';
 import uuid from 'react-native-uuid';
 import Toast from 'react-native-simple-toast';
-import {ScrollView} from 'react-native-gesture-handler';
+import ImagePicker from 'react-native-image-crop-picker';
 
 const PhotosScreen = ({navigation, route}) => {
   const {height, width} = useWindowDimensions();
@@ -31,6 +32,7 @@ const PhotosScreen = ({navigation, route}) => {
   const userData = useSelector(state => state.auth);
   const [images, setImages] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [img, setImg] = useState(false);
   console.log(route);
   useEffect(() => {
     setTimeout(async () => {
@@ -40,7 +42,32 @@ const PhotosScreen = ({navigation, route}) => {
       setImages(response.reviewImage);
       setLoading(false);
     }, 500);
-  }, []);
+  }, [img]);
+
+  const selectImg = async () => {
+    ImagePicker.openPicker({
+      width: 200,
+      height: 200,
+      cropping: true,
+    })
+      .then(async image => {
+        const payload = new FormData();
+        payload.append('_id', route.params.id);
+        payload.append('image', {
+          uri: image.path,
+          type: image.mime,
+          name: `${image.filename}.${image.mime.substring(
+            image.mime.indexOf('/') + 1,
+          )}`,
+        });
+        let cred = await getVerifiedKeys(userData.userToken);
+       const res= await addReviewImage(payload, cred);
+       console.log(res);
+      setImg(!img);
+      })
+      .catch(er => console.log('User cancelled selection'));
+  };
+  console.log('dd',route);
   return (
     <SafeAreaView styles={styles.main}>
       <View style={styles.header}>
@@ -56,7 +83,7 @@ const PhotosScreen = ({navigation, route}) => {
         <TouchableOpacity
           onPress={() => {
             if (userData.userToken !== null) {
-              navigation.navigate('AddReview', route.params.id);
+              selectImg()
             } else {
               Toast.show('Please Login');
             }
@@ -72,7 +99,7 @@ const PhotosScreen = ({navigation, route}) => {
       <ScrollView
         showsHorizontalScrollIndicator={false}
         showsVerticalScrollIndicator={false}
-        style={[{borderWidth: 1, height: h1}]}>
+        style={[{height: h1}]}>
         <View style={styles.imgContainer} key={uuid.v4()}>
           {images.length > 0 ? (
             images.map(e => {

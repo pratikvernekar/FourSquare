@@ -1,7 +1,6 @@
 import {SafeAreaView, StyleSheet, Text, View} from 'react-native';
 import React from 'react';
 import {useSelector} from 'react-redux';
-
 import AuthStack from './AuthStackNav';
 import LoggedInStack from './LoggedInStack';
 

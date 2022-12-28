@@ -190,7 +190,7 @@ export const getReviewImage = async (id, token) => {
   }
 };
 export const addReviewImage = async (image, token) => {
-  console.log(image);
+  
   try {
     let res = await fetch(`${BASE_URl}/addReviewImage`, {
       method: 'post',

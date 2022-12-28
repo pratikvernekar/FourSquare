@@ -100,9 +100,16 @@ const Flatlists1 = ({navigation, data, horizontal}) => {
               </TouchableOpacity>
             )}
           </View>
-          <View style={styles.batch}>
-            <Text style={{color: 'white'}}>{item.rating.toFixed(1) * 2}</Text>
-          </View>
+          {item.rating.toFixed(1) * 2 > 8 ? (
+            <View style={styles.batch}>
+              <Text style={{color: 'white'}}>{item.rating.toFixed(1) * 2}</Text>
+            </View>
+          ) : (
+            <View style={styles.batch1}>
+              <Text style={{color: 'white'}}>{item.rating.toFixed(1) * 2}</Text>
+            </View>
+          )}
+
           <Text style={styles.text2}>
             Indian •{' '}
             {item.priceRange === 4
@@ -137,7 +144,7 @@ const Flatlists1 = ({navigation, data, horizontal}) => {
     />
   );
 };
-const FavouriteList = ({navigation, data,}) => {
+const FavouriteList = ({navigation, data}) => {
   const dispatch = useDispatch();
   const {height, width} = useWindowDimensions();
   const h1 =
@@ -164,7 +171,7 @@ const FavouriteList = ({navigation, data,}) => {
         navigation.navigate(
           'IndividualRestaurant',
           (obj = {
-            id: item._id,
+            id: item.placeId,
             distance: (item.distance.calculated / 1609).toFixed(2),
           }),
         )
@@ -192,18 +199,22 @@ const FavouriteList = ({navigation, data,}) => {
               />
             </TouchableOpacity>
           </View>
-          <View style={styles.batch}>
-            <Text style={{color: 'white'}}>
-              {item?.placeRating?.toFixed(1) * 2}
-            </Text>
-          </View>
+          {item.rating.toFixed(1) * 2 > 8 ? (
+            <View style={styles.batch}>
+              <Text style={{color: 'white'}}>{item.rating.toFixed(1) * 2}</Text>
+            </View>
+          ) : (
+            <View style={styles.batch1}>
+              <Text style={{color: 'white'}}>{item.rating.toFixed(1) * 2}</Text>
+            </View>
+          )}
           <Text style={styles.text2}>
             Indian •{' '}
-            {item.priceRange > 750
+            {item.placePriceRange === 4
               ? '₹₹₹₹'
-              : item.priceRange > 500
+              : item.placePriceRange === 3
               ? '₹₹₹'
-              : item.priceRange > 250
+              : item.placePriceRange === 2
               ? '₹₹'
               : '₹'}{' '}
             {(item.distance.calculated / 1609).toFixed(2)} Km
@@ -358,6 +369,16 @@ const styles = StyleSheet.create({
     width: 24,
     backgroundColor: '#73cf42',
 
+    marginTop: Platform.OS === 'ios' ? 10 : 5,
+    borderRadius: 6,
+    marginLeft: 10,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  batch1: {
+    height: 24,
+    width: 24,
+    backgroundColor: '#a5d839',
     marginTop: Platform.OS === 'ios' ? 10 : 5,
     borderRadius: 6,
     marginLeft: 10,

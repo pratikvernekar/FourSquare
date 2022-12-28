@@ -164,9 +164,19 @@ const SearchScreen = ({navigation}) => {
                 </TouchableOpacity>
               )}
             </View>
-            <View style={styles.batch}>
-              <Text style={{color: 'white'}}>{item.rating.toFixed(1) * 2}</Text>
-            </View>
+            {item.rating.toFixed(1) * 2 > 8 ? (
+              <View style={styles.batch}>
+                <Text style={{color: 'white'}}>
+                  {item.rating.toFixed(1) * 2}
+                </Text>
+              </View>
+            ) : (
+              <View style={styles.batch1}>
+                <Text style={{color: 'white'}}>
+                  {item.rating.toFixed(1) * 2}
+                </Text>
+              </View>
+            )}
             <Text style={styles.text2}>
               Indian •{' '}
               {item.priceRange > 750
@@ -598,6 +608,16 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     marginHorizontal: Platform.OS == 'ios' ? 4 : 3.5,
     // alignSelf: 'center',
+  },
+  batch1: {
+    height: 24,
+    width: 24,
+    backgroundColor: '#a5d839',
+    marginTop: Platform.OS === 'ios' ? 10 : 5,
+    borderRadius: 6,
+    marginLeft: 10,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   searchTextContainer: {
     flexDirection: 'row',

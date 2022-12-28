@@ -30,10 +30,10 @@ const AddReviewScreen = ({navigation, route}) => {
       try {
         var key = await getVerifiedKeys(userData.userToken);
         const response = await addReview(route.params, text, key);
-        console.log(response);
         ref.current.clear();
         setImageUri([]);
         Toast.show(response.message);
+        navigation.goBack()
       } catch (error) {
         console.log(error);
       }
@@ -60,10 +60,10 @@ const AddReviewScreen = ({navigation, route}) => {
 
   const selectImg = () => {
     ImagePicker.openPicker({
-      width: 300,
-      height: 400,
+      width: 500,
+      height: 500,
       cropping: true,
-      // multiple: true
+  
     })
       .then(image => {
         const obj = {
@@ -74,17 +74,15 @@ const AddReviewScreen = ({navigation, route}) => {
           mime: image.mime,
         };
 
-        // console.log(image);
+      
         setImageUri(preVal => [...preVal, obj]);
-
         setImage(true);
       })
       .catch(e => {
         console.log(e);
       });
   };
-  // console.log(route.params);
-  // console.log('33', text.length);
+ 
   return (
     <SafeAreaView style={{flex: 1, backgroundColor: 'white'}}>
       <View style={styles.header}>
