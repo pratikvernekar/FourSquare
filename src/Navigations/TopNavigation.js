@@ -31,9 +31,9 @@ const TopNavigation = ({navigation}) => {
       <Tab.Navigator
         screenOptions={{
           tabBarLabelStyle: {
-            fontSize: 15,
+            fontSize: 16,
             fontFamily: 'AvenirLTStd-Book',
-            fontWeight: '500',
+            fontWeight: '600',
             textTransform: 'none',
           },
           tabBarItemStyle: {width: width1},

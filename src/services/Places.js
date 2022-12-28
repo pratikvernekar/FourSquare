@@ -238,3 +238,16 @@ export const addRating = async (id, rate, token) => {
     console.log('An error has occurred in addRating');
   }
 };
+
+export const favFilter = async (obj, token) => {
+  try {
+    const response = await axios.post(`${BASE_URl}/favFilter`, obj, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    return response.data;
+  } catch (error) {
+    console.log('An error has occurred in favFilter');
+  }
+};

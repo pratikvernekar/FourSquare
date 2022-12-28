@@ -42,6 +42,8 @@ const AboutScreen = ({navigation}) => {
             justifyContent: 'space-between',
             width: '63%',
             alignItems: 'center',
+
+            
           }}>
           <Pressable onPress={() => navigation.goBack()}>
             <Image

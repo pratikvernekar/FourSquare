@@ -14,9 +14,9 @@ import {SearchInput} from '../components/TextInputs/textInputs';
 import {ScrollView} from 'react-native-gesture-handler';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import {useSelector} from 'react-redux';
-import {searchPlaceWithFilter} from '../services/Places';
-import {Flatlists1} from '../components/Flatlists';
-const FilterScreen = ({navigation}) => {
+import {favFilter, searchPlaceWithFilter} from '../services/Places';
+import {FavouriteList, Flatlists1} from '../components/Flatlists';
+const FilterScreen = ({navigation, route}) => {
   const [loading, setLoading] = useState(false);
   const userData = useSelector(state => state.auth);
   const [popular, setPopular] = useState(false);
@@ -37,8 +37,10 @@ const FilterScreen = ({navigation}) => {
   const [text, setText] = useState('');
   const [radius, setRadius] = useState('');
   const [sort, setSort] = useState('');
-  const [filterData, setFilterData] = useState('');
+  const [filterData, setFilterData] = useState([]);
+  const [favouriteData, setFavouriteData] = useState([]);
   const [showList, setShowList] = useState(false);
+  const [showFavList, setFavList] = useState(false);
   const [showFilter, setShowFilter] = useState(true);
   const [nearMe, setNearMe] = useState(false);
 
@@ -65,17 +67,28 @@ const FilterScreen = ({navigation}) => {
     if (r3 === true) obj['price'] = 3;
     if (r4 === true) obj['price'] = 4;
     if (radius !== '') obj['radius'] = parseInt(radius);
-    const response = await searchPlaceWithFilter(obj, userData.userToken);
+
+    if (route.params === 'filterFav') {
+      const response = await favFilter(obj, userData.userToken);
+      if (response !== undefined) {
+        setFavouriteData(response);
+        setShowFilter(false);
+        setNearMe(false);
+        setFavList(true);
+      }
+    } else {
+      const response = await searchPlaceWithFilter(obj, userData.userToken);
+      if (response !== undefined) {
+        setFilterData(response);
+        setShowFilter(false);
+        setNearMe(false);
+        setShowList(true);
+      }
+    }
 
     setLoading(false);
-
-    if (response !== undefined) {
-      setFilterData(response);
-      setShowFilter(false);
-      setNearMe(false);
-      setShowList(true);
-    }
   };
+  //console.log(route);
   return (
     <SafeAreaView style={styles.main}>
       <View style={styles.header}>
@@ -124,6 +137,7 @@ const FilterScreen = ({navigation}) => {
                 setShowFilter(false);
                 setNearMe(true);
                 setShowList(false);
+                setFavList(false);
               }}
             />
           </View>
@@ -479,6 +493,23 @@ const FilterScreen = ({navigation}) => {
                 fontFamily: 'AvenirLTStd-Book',
               }}>
               No Results Found
+            </Text>
+          </View>
+        )
+      ) : null}
+
+      {showFavList ? (
+        favouriteData.length > 0 ? (
+          <FavouriteList data={favouriteData} />
+        ) : (
+          <View style={{width:'100%',alignItems:'center'}}>
+            <Text
+              style={{
+                fontSize: 21,
+                color: '#370f24',
+                fontFamily: 'AvenirLTStd-Book',
+              }}>
+              No Results
             </Text>
           </View>
         )

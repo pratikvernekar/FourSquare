@@ -30,17 +30,21 @@ const CustomDrawer = props => {
   const dispatch = useDispatch();
   const [loading, setLoading] = useState(false);
   useEffect(() => {
-    setTimeout(async () => {
-      setLoading(true);
-      const key = await getVerifiedKeys(authData.userToken);
-      const response = await getProfile(key);
-     // console.log(response);
-      setUserData(response);
-      dispatch(setUserName(response.userName));
-      setLoading(false);
-    }, 500);
-  }, [img]);
+    if (authData.userToken !== null) {
+      setTimeout(async () => {
+        setLoading(true);
+        const key = await getVerifiedKeys(authData.userToken);
+        const response = await getProfile(key);
+        // console.log(response);
+        setUserData(response);
+        dispatch(setUserName(response.userName));
+        setLoading(false);
+      }, 500);
+    }
 
+
+    
+  }, [img]);
   const selectImg = async () => {
     ImagePicker.openPicker({
       width: 200,
@@ -60,7 +64,7 @@ const CustomDrawer = props => {
         await addProfileImage(payload, cred);
         setImg(!img);
       })
-      .catch(er =>console.log('User cancelled selection'));
+      .catch(er => console.log('User cancelled selection'));
   };
 
   return (
@@ -169,10 +173,11 @@ const CustomDrawer = props => {
                 </View>
               </Pressable>
               {authData.userToken !== null ? (
-                <Pressable onPress={() =>{
-                  
-                  Toast.show('Logged Out')
-                  dispatch(logOut())}}>
+                <Pressable
+                  onPress={() => {
+                    Toast.show('Logged Out');
+                    dispatch(logOut());
+                  }}>
                   <View style={styles.drawerItemView}>
                     <Image
                       source={require('../assets/images/sidemenu/logout.png')}

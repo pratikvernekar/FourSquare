@@ -9,6 +9,7 @@ import {
   Platform,
   ActivityIndicator,
   useWindowDimensions,
+  TouchableOpacity,
 } from 'react-native';
 import React, {useEffect, useState} from 'react';
 import {searchFavourite} from '../services/Places';
@@ -65,10 +66,13 @@ const FavouriteScreen = ({navigation}) => {
           </Pressable>
 
           <Text style={styles.headerText}>Favourites</Text>
-          <Image
-            source={require('../assets/images/filter_icon.png')}
-            style={styles.imgBack}
-          />
+          <TouchableOpacity
+            onPress={() => navigation.navigate('Filter', 'filterFav')}>
+            <Image
+              source={require('../assets/images/filter_icon.png')}
+              style={styles.imgBack}
+            />
+          </TouchableOpacity>
         </View>
         <View style={styles.searchView}>
           <Image
