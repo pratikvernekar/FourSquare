@@ -19,11 +19,13 @@ const TopNavScreen = ({navigation}) => {
   const userData = useSelector(state => state.auth);
   const dispatch = useDispatch();
   useEffect(() => {
-    setTimeout(async () => {
-      const key = await getVerifiedKeys(userData.userToken);
-      const response = await getFavouriteId(key);
-      dispatch(setFavourite(response));
-    }, 500);
+    if (userData.userToken !== null) {
+      setTimeout(async () => {
+        const key = await getVerifiedKeys(userData.userToken);
+        const response = await getFavouriteId(key);
+        dispatch(setFavourite(response));
+      }, 500);
+    }
   }, [userData.skip]);
 
   return (

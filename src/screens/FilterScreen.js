@@ -12,7 +12,7 @@ import {
 import React, {useState} from 'react';
 import {SearchInput} from '../components/TextInputs/textInputs';
 import {ScrollView} from 'react-native-gesture-handler';
-import Icon from 'react-native-vector-icons/FontAwesome';
+import Icon from 'react-native-vector-icons/Feather';
 import {useSelector} from 'react-redux';
 import {favFilter, searchPlaceWithFilter} from '../services/Places';
 import {FavouriteList, Flatlists1} from '../components/Flatlists';
@@ -639,6 +639,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'space-between',
     paddingHorizontal: 20,
+    backgroundColor:'white'
   },
   featuresTextInactive: {
     color: '#351347',
