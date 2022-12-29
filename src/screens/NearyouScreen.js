@@ -126,7 +126,7 @@ const NearyouScreen = ({navigation}) => {
           {currentLatitude && currentLongitude !== '' ? (
             <MapView
               style={styles.mapStyle}
-              customMapStyle={mapStyle}
+             // customMapStyle={mapStyle}
               ref={mapRef}>
               <Marker
                 draggable

@@ -289,7 +289,7 @@ const IndividualRestaurant = ({navigation, route}) => {
             <>
               <MapView
                 style={styles.mapStyle}
-                customMapStyle={mapStyle}
+               // customMapStyle={mapStyle}
                 initialRegion={{
                   latitude: particularPlace.location?.coordinates[1],
                   longitude: particularPlace.location?.coordinates[0],

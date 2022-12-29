@@ -390,7 +390,7 @@ const SearchScreen = ({navigation}) => {
         <View style={styles.mapContainer}>
           <MapView
             style={styles.mapStyle}
-            customMapStyle={mapStyle}
+            //customMapStyle={mapStyle}
             initialRegion={{
               latitude: authData.latitude,
               longitude: authData.longitude,
@@ -476,7 +476,7 @@ const SearchScreen = ({navigation}) => {
               }, 1500);
             }}
             style={styles.mapStyle}
-            customMapStyle={mapStyle}
+            //customMapStyle={mapStyle}
             initialRegion={{
               latitude: authData.latitude,
               longitude: authData.longitude,
