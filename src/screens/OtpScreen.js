@@ -10,7 +10,7 @@ import {
 } from 'react-native';
 import React, {useEffect, useState} from 'react';
 import {Input2} from '../components/TextInputs/textInputs';
-import Buttons from '../components/Buttons/Buttons';
+import {Buttons} from '../components/Buttons/Buttons';
 import {useRoute} from '@react-navigation/native';
 import {sendOtp, verifyOtp} from '../services/UserAuth';
 import Toast from 'react-native-simple-toast';

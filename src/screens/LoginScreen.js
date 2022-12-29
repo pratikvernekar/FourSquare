@@ -112,7 +112,17 @@ const LoginScreen = ({navigation}) => {
                     />
                   </View>
                   <TouchableOpacity
-                    onPress={() => forgotPassword(values.email)}>
+                    onPress={() => {
+                      if(values.email.includes('@','.')){
+                        forgotPassword(values.email)
+                      }else{
+                        Toast.show('enter a valid email')
+                      }
+                    
+                     
+                 
+                      
+                    }}>
                     <View style={styles.forgetpassView}>
                       <Text style={styles.forhetText}>Forgot Password?</Text>
                     </View>
